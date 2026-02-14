@@ -271,6 +271,11 @@ configure_gnome() {
       run_cmd "gsettings set org.gnome.shell.extensions.dash-to-dock intellihide false || true"
       run_cmd "gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed true || true"
       run_cmd "gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize-or-previews' || true"
+      run_cmd "gsettings set org.gnome.shell.extensions.dash-to-dock running-indicator-style 'DOTS' || true"
+      run_cmd "gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-customize-running-dots true || true"
+      run_cmd "gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-running-dots-color '#ffffff' || true"
+      run_cmd "gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-running-dots-border-color '#ffffff' || true"
+      run_cmd "gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-running-dots-border-width 0 || true"
     fi
     if printf '%s\n' "$ext_list" | grep -q 'appindicatorsupport@rgcjonas.gmail.com'; then
       run_cmd "gnome-extensions enable appindicatorsupport@rgcjonas.gmail.com || true"
