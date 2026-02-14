@@ -99,6 +99,7 @@ class VNMusic(Gtk.Application):
         root.append(sc)
 
         win.set_child(root)
+        win.maximize()
         win.present()
 
 

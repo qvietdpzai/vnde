@@ -9,6 +9,10 @@ resolve_installer() {
     printf '%s\n' "$SRC_DIR/install-vnde.sh"
     return
   fi
+  if [[ -f "$SRC_DIR/vnde/install-vnde.sh" ]]; then
+    printf '%s\n' "$SRC_DIR/vnde/install-vnde.sh"
+    return
+  fi
 
   # Fallback when running inside repository checkout.
   local script_dir repo_root
@@ -23,7 +27,7 @@ resolve_installer() {
 }
 
 ensure_source() {
-  if [[ -f "$SRC_DIR/install-vnde.sh" ]]; then
+  if [[ -f "$SRC_DIR/install-vnde.sh" || -f "$SRC_DIR/vnde/install-vnde.sh" ]]; then
     return 0
   fi
 
@@ -55,6 +59,7 @@ Usage:
   vnde appcenter              Open VN App Center
   vnde news                   Open VN News
   vnde music                  Open VN Music
+  vnde files                  Open VN File Manager
   vnde doctor                 Show current VNDE paths
 EOF_USAGE
 }
@@ -103,6 +108,9 @@ case "$cmd" in
     ;;
   music)
     exec vn-music
+    ;;
+  files)
+    exec vn-file-manager
     ;;
   doctor)
     echo "VNDE_SOURCE_DIR=$SRC_DIR"

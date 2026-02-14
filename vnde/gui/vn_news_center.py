@@ -129,6 +129,7 @@ class VNNews(Gtk.Application):
         root.append(top)
         root.append(body)
         self.win.set_child(root)
+        self.win.maximize()
         self.win.present()
         self.reload()
 

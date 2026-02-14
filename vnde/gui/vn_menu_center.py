@@ -15,7 +15,7 @@ MENU_ITEMS = [
     ("He thong", "Docker", "Mo trang thai docker", "vnde-docker.desktop", "vnde-docker"),
     ("He thong", "Settings", "Cai dat he thong GNOME", "gnome-control-center", "preferences-system"),
     ("Ung dung", "Firefox", "Trinh duyet web", "firefox", "firefox"),
-    ("Ung dung", "Files", "Quan ly file", "nautilus", "system-file-manager"),
+    ("Ung dung", "VN File Manager", "Quan ly file theo phong cach VNDE", "vn-file-manager", "vnde-file-manager"),
 ]
 
 CSS = """
@@ -83,6 +83,7 @@ class VNMenu(Gtk.Application):
         self.win.set_child(root)
 
         self.render()
+        self.win.maximize()
         self.win.present()
 
     def render(self, *_args):

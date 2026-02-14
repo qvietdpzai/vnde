@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=VN File Manager
+Comment=Quan ly file theo phong cach VNDE
+Exec=vn-file-manager
+Type=Application
+Categories=System;FileManager;
+Icon=vnde-file-manager
+Terminal=false

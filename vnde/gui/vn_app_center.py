@@ -69,13 +69,15 @@ def run_root(cmd):
 
 class AppCard(Gtk.Box):
     def __init__(self, app, parent):
-        super().__init__(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+        super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=12)
         self.app = app
         self.parent = parent
         self.add_css_class("card")
+        self.set_size_request(320, 220)
 
+        top = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
         icon = Gtk.Image.new_from_icon_name(app.get("icon", "application-x-executable"))
-        icon.set_pixel_size(38)
+        icon.set_pixel_size(34)
 
         text_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3)
         title = Gtk.Label(label=app["name"], xalign=0)
@@ -88,7 +90,7 @@ class AppCard(Gtk.Box):
 
         actions = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
         actions.set_halign(Gtk.Align.END)
-        actions.set_valign(Gtk.Align.CENTER)
+        actions.set_hexpand(True)
         btn_install = Gtk.Button(label="Cai dat")
         btn_install.add_css_class("suggested-action")
         btn_install.connect("clicked", self.on_install)
@@ -97,8 +99,10 @@ class AppCard(Gtk.Box):
         actions.append(btn_install)
         actions.append(btn_open)
 
-        self.append(icon)
-        self.append(text_box)
+        top.append(icon)
+        top.append(text_box)
+
+        self.append(top)
         self.append(actions)
 
     def on_open(self, _btn):
@@ -142,13 +146,17 @@ class VNAppCenter(Gtk.Application):
         row.append(self.search)
         row.append(self.status)
 
-        self.listbox = Gtk.ListBox()
-        self.listbox.set_selection_mode(Gtk.SelectionMode.NONE)
+        self.flow = Gtk.FlowBox()
+        self.flow.set_selection_mode(Gtk.SelectionMode.NONE)
+        self.flow.set_min_children_per_line(2)
+        self.flow.set_max_children_per_line(4)
+        self.flow.set_column_spacing(12)
+        self.flow.set_row_spacing(12)
 
         sc = Gtk.ScrolledWindow()
         sc.set_vexpand(True)
         sc.set_hexpand(True)
-        sc.set_child(self.listbox)
+        sc.set_child(self.flow)
 
         root.append(hero)
         root.append(row)
@@ -156,6 +164,7 @@ class VNAppCenter(Gtk.Application):
         self.win.set_child(root)
 
         self.render()
+        self.win.maximize()
         self.win.present()
 
     def set_status(self, msg):
@@ -163,19 +172,17 @@ class VNAppCenter(Gtk.Application):
 
     def render(self, *_):
         term = self.search.get_text().strip().lower()
-        while True:
-            r = self.listbox.get_row_at_index(0)
-            if r is None:
-                break
-            self.listbox.remove(r)
+        child = self.flow.get_first_child()
+        while child is not None:
+            nxt = child.get_next_sibling()
+            self.flow.remove(child)
+            child = nxt
 
         for app in APPS:
             blob = f"{app['id']} {app['name']} {app['desc']}".lower()
             if term and term not in blob:
                 continue
-            row = Gtk.ListBoxRow()
-            row.set_child(AppCard(app, self))
-            self.listbox.append(row)
+            self.flow.insert(AppCard(app, self), -1)
 
     def install(self, app):
         cmd = install_cmd(app)
