@@ -42,9 +42,9 @@ vnde update
 ```
 
 ## Cai dat 1 lenh tu moi noi (khong can co thu muc vnde)
-Dat URL repo qua bien moi truong (hoac dung mac dinh trong script), roi chay:
+Chay truc tiep:
 ```bash
-VNDE_REPO_URL="https://github.com/<org>/<repo>.git" bash -c "$(curl -fsSL https://raw.githubusercontent.com/<org>/<repo>/main/vnde/scripts/bootstrap-vnde.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/qvietdpzai/vnde/main/vnde/scripts/bootstrap-vnde.sh)"
 ```
 
 ## Dang nhap session VNDE

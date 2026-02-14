@@ -1,16 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_URL="${VNDE_REPO_URL:-https://github.com/<your-org>/<your-repo>.git}"
+REPO_URL="${VNDE_REPO_URL:-https://github.com/qvietdpzai/vnde.git}"
 SRC_DIR="${VNDE_SOURCE_DIR:-$HOME/.local/share/vnde/source}"
 
 echo "[VNDE] Bootstrap tu: $REPO_URL"
-
-if [[ "$REPO_URL" == *"<your-org>"* || "$REPO_URL" == *"<your-repo>"* ]]; then
-  echo "[VNDE] Hay set repo that:"
-  echo "  export VNDE_REPO_URL='https://github.com/<org>/<repo>.git'"
-  exit 1
-fi
 
 if ! command -v git >/dev/null 2>&1; then
   if command -v apt-get >/dev/null 2>&1; then

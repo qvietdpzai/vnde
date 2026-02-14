@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SRC_DIR="${VNDE_SOURCE_DIR:-$HOME/.local/share/vnde/source}"
-REPO_URL="${VNDE_REPO_URL:-https://github.com/<your-org>/<your-repo>.git}"
+REPO_URL="${VNDE_REPO_URL:-https://github.com/qvietdpzai/vnde.git}"
 
 resolve_installer() {
   if [[ -f "$SRC_DIR/install-vnde.sh" ]]; then
@@ -23,11 +23,6 @@ resolve_installer() {
 }
 
 ensure_source() {
-  if [[ "$REPO_URL" == *"<your-org>"* || "$REPO_URL" == *"<your-repo>"* ]]; then
-    echo "[VNDE] Chua set repo URL."
-    echo "[VNDE] Hay set: export VNDE_REPO_URL='https://github.com/<org>/<repo>.git'"
-    return 1
-  fi
   if [[ -f "$SRC_DIR/install-vnde.sh" ]]; then
     return 0
   fi
@@ -82,6 +77,10 @@ case "$cmd" in
       ensure_source || exit 1
     fi
     if [[ -d "$SRC_DIR/.git" ]] && command -v git >/dev/null 2>&1; then
+      if [[ -n "$(git -C "$SRC_DIR" status --porcelain 2>/dev/null || true)" ]]; then
+        echo "[VNDE] Source dang co thay doi local, dang stash tam..."
+        git -C "$SRC_DIR" stash push -u -m "vnde-auto-stash" >/dev/null 2>&1 || true
+      fi
       echo "[VNDE] Dang pull source..."
       git -C "$SRC_DIR" pull --ff-only || true
     fi

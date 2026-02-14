@@ -112,10 +112,15 @@ setup_services() {
 }
 
 install_shared_files() {
+  local SOURCE_MIRROR="$HOME/.local/share/vnde/source"
   run_cmd "mkdir -p \"$HOME/.config/vnde/rofi\" \"$HOME/.local/bin\" \"$HOME/.local/share/applications\" \"$HOME/.local/share/icons/hicolor/scalable/apps\" \"$HOME/.local/share/backgrounds\" \"$HOME/.local/share/vnde/gui\" \"$HOME/.local/share/vnde/source\" \"$HOME/.config/autostart\""
 
   # Keep a local source copy so users can run vnde-install / vnde-update from terminal.
-  run_cmd "cp -a \"$ROOT_DIR/.\" \"$HOME/.local/share/vnde/source/\""
+  if [[ "$(realpath "$ROOT_DIR" 2>/dev/null || echo "$ROOT_DIR")" != "$(realpath "$SOURCE_MIRROR" 2>/dev/null || echo "$SOURCE_MIRROR")" ]]; then
+    run_cmd "cp -a \"$ROOT_DIR/.\" \"$SOURCE_MIRROR/\""
+  else
+    log "Source mirror is current directory; skip source copy."
+  fi
 
   run_cmd "cp \"$ROOT_DIR/vnde/rofi/vnde.rasi\" \"$HOME/.config/vnde/rofi/vnde.rasi\""
   run_cmd "cp \"$ROOT_DIR/assets/wallpapers/vietnam-dawn.svg\" \"$HOME/.local/share/backgrounds/vietnam-dawn.svg\""
