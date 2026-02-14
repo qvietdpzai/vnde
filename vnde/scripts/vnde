@@ -53,6 +53,7 @@ VNDE command
 
 Usage:
   vnde install [args...]      Install/apply VNDE profile
+                              Vi du: vnde install --profile kde
   vnde update [args...]       Update source (if git) and re-apply config
   vnde terminal [args...]     Open VN Terminal
   vnde menu                   Open VN Menu

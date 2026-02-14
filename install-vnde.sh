@@ -26,7 +26,7 @@ Usage:
   ./install-vnde.sh [options]
 
 Options:
-  --profile gnome|openbox   Install profile type (default: gnome)
+  --profile gnome|kde       Install profile type (default: gnome)
   --dry-run                 Show commands only
   --no-packages             Skip package installation
   -h, --help                Show this help
@@ -44,7 +44,7 @@ while [[ $# -gt 0 ]]; do
   shift
 done
 
-if [[ "$PROFILE" != "gnome" && "$PROFILE" != "openbox" ]]; then
+if [[ "$PROFILE" != "gnome" && "$PROFILE" != "kde" ]]; then
   err "Invalid --profile: $PROFILE"
   exit 1
 fi
@@ -85,15 +85,24 @@ install_packages_gnome() {
   esac
 }
 
-install_packages_openbox() {
+install_packages_kde() {
   local pm="$1"
   case "$pm" in
     apt)
       run_cmd "sudo apt-get update"
-      run_cmd "sudo apt-get install -y openbox tint2 rofi picom feh thunar xterm ibus ibus-unikey fonts-noto-core fonts-noto-color-emoji papirus-icon-theme xdg-utils flatpak snapd docker.io docker-compose-v2 python3-gi python3-feedparser gir1.2-gtk-4.0 xclip xdotool"
+      run_cmd "sudo apt-get install -y plasma-desktop plasma-workspace kde-config-gtk-style dolphin konsole sddm-theme-breeze rofi flameshot ibus ibus-unikey fonts-noto-core fonts-noto-color-emoji papirus-icon-theme xdg-utils flatpak snapd docker.io docker-compose-v2 python3-gi python3-feedparser gir1.2-gtk-4.0 libnotify-bin xclip xdotool"
+      ;;
+    dnf)
+      run_cmd "sudo dnf install -y @kde-desktop-environment dolphin konsole rofi flameshot ibus ibus-bamboo google-noto-sans-fonts google-noto-emoji-fonts papirus-icon-theme xdg-utils flatpak docker docker-compose python3-gobject python3-feedparser gtk4 libnotify xclip xdotool"
+      ;;
+    pacman)
+      run_cmd "sudo pacman -Sy --noconfirm plasma-desktop plasma-workspace dolphin konsole rofi flameshot ibus ibus-unikey noto-fonts noto-fonts-emoji papirus-icon-theme xdg-utils flatpak snapd docker docker-compose python-gobject python-feedparser gtk4 libnotify xclip xdotool"
+      ;;
+    zypper)
+      run_cmd "sudo zypper install -y patterns-kde-kde kde-cli-tools5 dolphin konsole rofi flameshot ibus-unikey google-noto-fonts papirus-icon-theme xdg-utils flatpak snapd docker docker-compose python3-gobject python3-feedparser gtk4-tools libnotify-tools xclip xdotool"
       ;;
     *)
-      warn "Openbox profile package list is tuned for apt only."
+      warn "Unsupported package manager. Install KDE dependencies manually."
       ;;
   esac
 }
@@ -143,13 +152,14 @@ install_shared_files() {
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-sound-popup\" \"$HOME/.local/bin/vn-sound-popup\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-news-cli\" \"$HOME/.local/bin/vn-news-cli\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-news-panel\" \"$HOME/.local/bin/vn-news-panel\""
+  run_cmd "cp \"$ROOT_DIR/vnde/scripts/vnkde-startup-splash\" \"$HOME/.local/bin/vnkde-startup-splash\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vnde-install\" \"$HOME/.local/bin/vnde-install\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vnde-update\" \"$HOME/.local/bin/vnde-update\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vnde\" \"$HOME/.local/bin/vnde\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/bootstrap-vnde.sh\" \"$HOME/.local/bin/vnde-bootstrap\""
 
   run_cmd "chmod +x \"$HOME/.local/share/vnde/gui/vn_app_center.py\" \"$HOME/.local/share/vnde/gui/vn_news_center.py\" \"$HOME/.local/share/vnde/gui/vn_music_center.py\" \"$HOME/.local/share/vnde/gui/vn_menu_center.py\" \"$HOME/.local/share/vnde/gui/vn_file_manager.py\""
-  run_cmd "chmod +x \"$HOME/.local/bin/vn-app-store\" \"$HOME/.local/bin/vn-news\" \"$HOME/.local/bin/vn-music\" \"$HOME/.local/bin/vn-menu\" \"$HOME/.local/bin/vn-terminal\" \"$HOME/.local/bin/vn-terminal-context-menu\" \"$HOME/.local/bin/menu\" \"$HOME/.local/bin/vn-file-manager\" \"$HOME/.local/bin/vn-sound-popup\" \"$HOME/.local/bin/vn-news-cli\" \"$HOME/.local/bin/vn-news-panel\" \"$HOME/.local/bin/vnde-install\" \"$HOME/.local/bin/vnde-update\" \"$HOME/.local/bin/vnde\" \"$HOME/.local/bin/vnde-bootstrap\""
+  run_cmd "chmod +x \"$HOME/.local/bin/vn-app-store\" \"$HOME/.local/bin/vn-news\" \"$HOME/.local/bin/vn-music\" \"$HOME/.local/bin/vn-menu\" \"$HOME/.local/bin/vn-terminal\" \"$HOME/.local/bin/vn-terminal-context-menu\" \"$HOME/.local/bin/menu\" \"$HOME/.local/bin/vn-file-manager\" \"$HOME/.local/bin/vn-sound-popup\" \"$HOME/.local/bin/vn-news-cli\" \"$HOME/.local/bin/vn-news-panel\" \"$HOME/.local/bin/vnkde-startup-splash\" \"$HOME/.local/bin/vnde-install\" \"$HOME/.local/bin/vnde-update\" \"$HOME/.local/bin/vnde\" \"$HOME/.local/bin/vnde-bootstrap\""
   run_cmd "sudo install -Dm755 \"$HOME/.local/bin/vnde-install\" /usr/local/bin/vnde-install || true"
   run_cmd "sudo install -Dm755 \"$HOME/.local/bin/vnde-update\" /usr/local/bin/vnde-update || true"
   run_cmd "sudo install -Dm755 \"$HOME/.local/bin/vnde\" /usr/local/bin/vnde || true"
@@ -165,6 +175,7 @@ install_shared_files() {
   run_cmd "cp \"$ROOT_DIR/vnde/applications/vnde-docker.desktop\" \"$HOME/.local/share/applications/vnde-docker.desktop\""
 
   run_cmd "cp \"$ROOT_DIR/vnde/autostart/vn-news-panel.desktop\" \"$HOME/.config/autostart/vn-news-panel.desktop\""
+  run_cmd "cp \"$ROOT_DIR/vnde/autostart/vnkde-splash.desktop\" \"$HOME/.config/autostart/vnkde-splash.desktop\""
 
   run_cmd "cp \"$ROOT_DIR/vnde/icons/scalable/apps/vnde-app-store.svg\" \"$HOME/.local/share/icons/hicolor/scalable/apps/vnde-app-store.svg\""
   run_cmd "cp \"$ROOT_DIR/vnde/icons/scalable/apps/vnde-news.svg\" \"$HOME/.local/share/icons/hicolor/scalable/apps/vnde-news.svg\""
@@ -226,6 +237,111 @@ DESKTOP
   mkdir -p "$HOME/.cache"
   cp "$HOME/.local/share/xsessions/vnde.desktop" "$tmp"
   run_cmd "sudo install -Dm644 \"$tmp\" /usr/share/xsessions/vnde.desktop || true"
+}
+
+install_vnde_kde_session() {
+  run_cmd "cp \"$ROOT_DIR/vnde/scripts/vnde-kde-session\" \"$HOME/.local/bin/vnde-kde-session\""
+  run_cmd "chmod +x \"$HOME/.local/bin/vnde-kde-session\""
+
+  if [[ "$DRY_RUN" -eq 1 ]]; then
+    printf '[DRY ] write %s\n' "$HOME/.local/share/xsessions/vnde-kde.desktop"
+    printf '[DRY ] install %s\n' "/usr/share/xsessions/vnde-kde.desktop"
+    return
+  fi
+
+  mkdir -p "$HOME/.local/share/xsessions"
+  cat > "$HOME/.local/share/xsessions/vnde-kde.desktop" <<DESKTOP
+[Desktop Entry]
+Name=VNDE (KDE)
+Comment=Vietnam Desktop Experience on KDE Plasma
+Exec=$HOME/.local/bin/vnde-kde-session
+TryExec=startplasma-x11
+Type=Application
+DesktopNames=KDE;VNDE
+DESKTOP
+
+  tmp="$HOME/.cache/vnde-kde.desktop"
+  mkdir -p "$HOME/.cache"
+  cp "$HOME/.local/share/xsessions/vnde-kde.desktop" "$tmp"
+  run_cmd "sudo install -Dm644 \"$tmp\" /usr/share/xsessions/vnde-kde.desktop || true"
+}
+
+configure_kde() {
+  local wp="$HOME/.local/share/backgrounds/vietnam-dawn.svg"
+  local appletrc="$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
+  local ksplashrc="$HOME/.config/ksplashrc"
+  local kwrite=""
+  local pairs=""
+
+  if command -v plasma-apply-wallpaperimage >/dev/null 2>&1; then
+    run_cmd "plasma-apply-wallpaperimage \"$wp\" || true"
+  fi
+
+  if command -v kwriteconfig6 >/dev/null 2>&1; then
+    kwrite="kwriteconfig6"
+  elif command -v kwriteconfig5 >/dev/null 2>&1; then
+    kwrite="kwriteconfig5"
+  fi
+
+  # Disable default KDE splash ("Made by KDE") and use VNDE splash autostart.
+  if [[ -n "$kwrite" ]]; then
+    run_cmd "$kwrite --file \"$ksplashrc\" --group KSplash --key Theme None"
+    run_cmd "$kwrite --file \"$ksplashrc\" --group KSplash --key Engine none"
+  else
+    warn "kwriteconfig not found. Cannot disable default KDE splash automatically."
+  fi
+
+  if [[ -z "$kwrite" || ! -f "$appletrc" ]]; then
+    warn "KDE launcher branding skipped (plasma appletrc unavailable)."
+    log "KDE profile applied."
+    return
+  fi
+
+  pairs="$(python3 - "$appletrc" <<'PY'
+import re
+import sys
+
+path = sys.argv[1]
+targets = {"org.kde.plasma.kickoff", "org.kde.plasma.kicker", "org.kde.plasma.kickerdash"}
+current = None
+found = []
+
+for raw in open(path, "r", encoding="utf-8", errors="ignore"):
+    line = raw.strip()
+    m = re.match(r"^\[Containments\]\[(\d+)\]\[Applets\]\[(\d+)\]$", line)
+    if m:
+        current = (m.group(1), m.group(2))
+        continue
+    if current and line.startswith("plugin="):
+        plugin = line.split("=", 1)[1].strip()
+        if plugin in targets:
+            found.append(current)
+        current = None
+
+for c, a in sorted(set(found)):
+    print(f"{c}:{a}")
+PY
+)"
+
+  if [[ -z "$pairs" ]]; then
+    warn "KDE App Menu widget not found in current Plasma layout."
+    return
+  fi
+
+  while IFS=: read -r c a; do
+    [[ -z "$c" || -z "$a" ]] && continue
+    run_cmd "$kwrite --file \"$appletrc\" --group Containments --group \"$c\" --group Applets --group \"$a\" --group Configuration --group General --key icon vnde-menu"
+    run_cmd "$kwrite --file \"$appletrc\" --group Containments --group \"$c\" --group Applets --group \"$a\" --group Configuration --group General --key customButtonText 'VNDE (KDE) POWER BY KDE'"
+    run_cmd "$kwrite --file \"$appletrc\" --group Containments --group \"$c\" --group Applets --group \"$a\" --group Configuration --group General --key useCustomButtonText true"
+  done <<< "$pairs"
+
+  if command -v qdbus6 >/dev/null 2>&1; then
+    run_cmd "qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript 'for (var i in desktops()) { desktops()[i].reloadConfig(); }' >/dev/null 2>&1 || true"
+  elif command -v qdbus >/dev/null 2>&1; then
+    run_cmd "qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript 'for (var i in desktops()) { desktops()[i].reloadConfig(); }' >/dev/null 2>&1 || true"
+  fi
+
+  log "KDE profile applied."
 }
 
 configure_gnome() {
@@ -314,13 +430,20 @@ DESKTOP
 }
 
 print_done() {
+  local session_name
+  if [[ "$PROFILE" == "kde" ]]; then
+    session_name="VNDE (KDE)"
+  else
+    session_name="VNDE"
+  fi
+
   cat <<DONE
 
 VNDE cai dat xong theo profile: $PROFILE
 
-Neu dung GNOME (khuyen nghi):
+Sau khi cai:
 1) Dang xuat.
-2) O login, chon session: VNDE.
+2) O login, chon session: $session_name.
 3) Dang nhap lai.
 
 Phim tat:
@@ -335,7 +458,8 @@ Phim tat:
 
 Lenh terminal:
 - vnde                        # lenh tong VNDE (install/update/menu/terminal...)
-- vnde-install                # cai/ap dung VNDE (GNOME profile)
+- vnde-install                # cai/ap dung VNDE (mac dinh GNOME)
+- vnde install --profile kde  # cai/ap dung VNDE (KDE)
 - vnde-update                 # cap nhat source + ap dung lai config VNDE
 - vnde-bootstrap              # bootstrap tu repo roi cai tu dong
 - Alt + g trong VN Terminal   # tim nhanh tren internet
@@ -353,7 +477,7 @@ main() {
     if [[ "$PROFILE" == "gnome" ]]; then
       install_packages_gnome "$pm"
     else
-      install_packages_openbox "$pm"
+      install_packages_kde "$pm"
     fi
     setup_services
   fi
@@ -365,7 +489,8 @@ main() {
     install_vnde_gnome_session
     configure_gnome
   else
-    install_openbox_session_legacy
+    install_vnde_kde_session
+    configure_kde
   fi
 
   print_done

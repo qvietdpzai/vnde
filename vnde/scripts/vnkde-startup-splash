@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+python3 - <<'PY'
+import gi
+gi.require_version("Gtk", "4.0")
+from gi.repository import Gtk, Gdk, GLib
+
+CSS = """
+window {
+  background: linear-gradient(120deg, #040404, #0e1116);
+}
+.card {
+  background: #0b0f14;
+  border: 2px solid #ffd700;
+  border-radius: 18px;
+  padding: 20px;
+}
+.title {
+  color: #ffffff;
+  font-size: 38px;
+  font-weight: 800;
+}
+.sub {
+  color: #d5dbe3;
+  font-size: 18px;
+}
+"""
+
+class Splash(Gtk.Application):
+    def __init__(self):
+        super().__init__(application_id="vn.de.kde.splash")
+
+    def do_activate(self):
+        provider = Gtk.CssProvider()
+        provider.load_from_data(CSS.encode())
+        Gtk.StyleContext.add_provider_for_display(
+            Gdk.Display.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
+
+        win = Gtk.ApplicationWindow(application=self)
+        win.set_decorated(False)
+        win.set_default_size(760, 360)
+        win.set_modal(True)
+        win.set_title("VNKDE Splash")
+
+        root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=16)
+        root.set_halign(Gtk.Align.CENTER)
+        root.set_valign(Gtk.Align.CENTER)
+        root.add_css_class("card")
+
+        logos = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=28)
+        logos.set_halign(Gtk.Align.CENTER)
+        kd = Gtk.Image.new_from_icon_name("start-here-kde")
+        kd.set_pixel_size(96)
+        vn = Gtk.Image.new_from_icon_name("vnde-menu")
+        vn.set_pixel_size(96)
+        logos.append(kd)
+        logos.append(vn)
+
+        title = Gtk.Label(label="VNDE (KDE)", xalign=0.5)
+        title.add_css_class("title")
+        sub = Gtk.Label(label="POWER BY KDE", xalign=0.5)
+        sub.add_css_class("sub")
+
+        root.append(logos)
+        root.append(title)
+        root.append(sub)
+        win.set_child(root)
+        win.present()
+
+        GLib.timeout_add(2600, self.close_now, win)
+
+    def close_now(self, win):
+        win.close()
+        self.quit()
+        return False
+
+Splash().run()
+PY

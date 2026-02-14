@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=VNKDE Startup Splash
+Comment=Show VNKDE + KDE startup logo
+Exec=sh -lc "$HOME/.local/bin/vnkde-startup-splash"
+OnlyShowIn=KDE;PLASMA;
+NoDisplay=true
+X-KDE-autostart-phase=1

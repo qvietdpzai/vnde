@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export XDG_CURRENT_DESKTOP=KDE
+export DESKTOP_SESSION=vnde-kde
+export LANG=vi_VN.UTF-8
+export LANGUAGE=vi_VN:vi
+export LC_TIME=vi_VN.UTF-8
+export XMODIFIERS=@im=ibus
+export GTK_IM_MODULE=ibus
+export QT_IM_MODULE=ibus
+
+if command -v startplasma-x11 >/dev/null 2>&1; then
+  exec startplasma-x11
+fi
+if command -v startplasma-wayland >/dev/null 2>&1; then
+  exec startplasma-wayland
+fi
+
+exec startplasma
