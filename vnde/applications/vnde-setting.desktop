@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=VN SETTING
+Comment=Trung tam cai dat cho VNDE
+Exec=vn-setting
+Type=Application
+Categories=Settings;System;
+Icon=vnde-setting
+StartupWMClass=vnde-setting
+Terminal=false

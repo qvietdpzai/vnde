@@ -11,6 +11,8 @@ MENU_ITEMS = [
     ("He thong", "VN Terminal", "Terminal phong cach VNDE", "vn-terminal", "vnde-terminal"),
     ("He thong", "VN HELPER", "Tro giup thao tac nhanh cho he thong", "vn-helper", "vnde-helper"),
     ("He thong", "VN SUPPORTS", "Lien he va ho tro VNDE", "vn-supports", "vnde-supports"),
+    ("He thong", "VN SETTING", "Trung tam cai dat cua VNDE", "vn-setting", "vnde-setting"),
+    ("He thong", "VN MONITOR", "Theo doi tai nguyen he thong", "vn-monitor", "vnde-monitor"),
     ("He thong", "VN FORUM", "Dien dan noi bo cua cong dong VNDE", "vn-forum", "vnde-forum"),
     ("Tin tuc", "VN News", "Doc tin trong giao dien GUI", "vn-news", "vnde-news"),
     ("Tin tuc", "VN News CLI", "Doc tin nhanh trong terminal", "vn-terminal -e vn-news-cli", "vnde-news"),

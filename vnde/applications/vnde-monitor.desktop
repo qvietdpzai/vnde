@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=VN MONITOR
+Comment=Theo doi tai nguyen he thong VNDE
+Exec=vn-monitor
+Type=Application
+Categories=System;Monitor;
+Icon=vnde-monitor
+StartupWMClass=vnde-monitor
+Terminal=false

@@ -63,6 +63,8 @@ Usage:
   vnde files                  Open VN File Manager
   vnde helper                 Open VN HELPER
   vnde supports               Open VN SUPPORTS
+  vnde setting                Open VN SETTING
+  vnde monitor                Open VN MONITOR
   vnde forum                  Open VN FORUM
   vnde forum-node             Start VN FORUM P2P node
   vnde doctor                 Show current VNDE paths
@@ -122,6 +124,12 @@ case "$cmd" in
     ;;
   supports)
     exec vn-supports
+    ;;
+  setting)
+    exec vn-setting
+    ;;
+  monitor)
+    exec vn-monitor
     ;;
   forum)
     exec vn-forum
