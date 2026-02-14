@@ -107,7 +107,7 @@ class VNAppCenter(Gtk.Application):
         apply_css()
         self.win = Gtk.ApplicationWindow(application=self)
         self.win.set_title("VN App Center")
-        self.win.maximize()
+        self.win.fullscreen()
 
         root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
         root.set_margin_top(16)

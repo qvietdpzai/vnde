@@ -46,7 +46,7 @@ class VNNews(Gtk.Application):
         apply_css()
         self.win = Gtk.ApplicationWindow(application=self)
         self.win.set_title("VN News")
-        self.win.maximize()
+        self.win.fullscreen()
 
         root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         root.set_margin_top(14)

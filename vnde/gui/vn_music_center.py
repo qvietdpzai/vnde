@@ -37,7 +37,7 @@ class VNMusic(Gtk.Application):
         apply_css()
         win = Gtk.ApplicationWindow(application=self)
         win.set_title("VN Music")
-        win.maximize()
+        win.fullscreen()
 
         root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
         root.set_margin_top(16)
