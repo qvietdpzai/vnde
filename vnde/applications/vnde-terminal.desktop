@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=VN Terminal
+Comment=Terminal phong cach Viet
+Exec=vn-terminal
+Type=Application
+Categories=System;TerminalEmulator;
+Icon=vnde-terminal
+Terminal=false

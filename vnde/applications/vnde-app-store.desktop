@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=VN App Center
+Comment=Ung dung cai dat theo phong cach App Center
+Exec=vn-app-store
+Type=Application
+Categories=System;PackageManager;
+Icon=vnde-app-store
+Terminal=false

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SRC_DIR="${VNDE_SOURCE_DIR:-$HOME/.local/share/vnde/source}"
+
+if [[ ! -x "$SRC_DIR/install-vnde.sh" ]]; then
+  echo "[VNDE] Khong tim thay source tai: $SRC_DIR"
+  echo "[VNDE] Hay chay installer goc 1 lan tu thu muc du an."
+  exit 1
+fi
+
+exec "$SRC_DIR/install-vnde.sh" --profile gnome "$@"

@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SRC_DIR="${VNDE_SOURCE_DIR:-$HOME/.local/share/vnde/source}"
+REPO_URL="${VNDE_REPO_URL:-https://github.com/<your-org>/<your-repo>.git}"
+
+resolve_installer() {
+  if [[ -x "$SRC_DIR/install-vnde.sh" ]]; then
+    printf '%s\n' "$SRC_DIR/install-vnde.sh"
+    return
+  fi
+
+  # Fallback when running inside repository checkout.
+  local script_dir repo_root
+  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  repo_root="$(cd "$script_dir/../.." && pwd)"
+  if [[ -x "$repo_root/install-vnde.sh" ]]; then
+    printf '%s\n' "$repo_root/install-vnde.sh"
+    return
+  fi
+
+  return 1
+}
+
+ensure_source() {
+  if [[ "$REPO_URL" == *"<your-org>"* || "$REPO_URL" == *"<your-repo>"* ]]; then
+    echo "[VNDE] Chua set repo URL."
+    echo "[VNDE] Hay set: export VNDE_REPO_URL='https://github.com/<org>/<repo>.git'"
+    return 1
+  fi
+  if [[ -x "$SRC_DIR/install-vnde.sh" ]]; then
+    return 0
+  fi
+
+  mkdir -p "$(dirname "$SRC_DIR")"
+  if ! command -v git >/dev/null 2>&1; then
+    echo "[VNDE] Thieu git de tai source. Hay cai git truoc."
+    return 1
+  fi
+
+  echo "[VNDE] Dang tai source tu: $REPO_URL"
+  rm -rf "$SRC_DIR.tmp"
+  if ! git clone --depth 1 "$REPO_URL" "$SRC_DIR.tmp"; then
+    echo "[VNDE] Clone that bai. Ban co the set VNDE_REPO_URL=<repo_url>"
+    return 1
+  fi
+  rm -rf "$SRC_DIR"
+  mv "$SRC_DIR.tmp" "$SRC_DIR"
+}
+
+usage() {
+  cat <<'EOF_USAGE'
+VNDE command
+
+Usage:
+  vnde install [args...]      Install/apply VNDE profile
+  vnde update [args...]       Update source (if git) and re-apply config
+  vnde terminal [args...]     Open VN Terminal
+  vnde menu                   Open VN Menu
+  vnde appcenter              Open VN App Center
+  vnde news                   Open VN News
+  vnde music                  Open VN Music
+  vnde doctor                 Show current VNDE paths
+EOF_USAGE
+}
+
+cmd="${1:-}"
+case "$cmd" in
+  install)
+    shift
+    installer="$(resolve_installer || true)"
+    if [[ -z "${installer:-}" ]]; then
+      ensure_source || exit 1
+      installer="$(resolve_installer || true)"
+    fi
+    [[ -z "${installer:-}" ]] && { echo "[VNDE] Khong tim thay install-vnde.sh"; exit 1; }
+    exec "$installer" --profile gnome "$@"
+    ;;
+  update)
+    shift
+    if [[ ! -d "$SRC_DIR/.git" ]]; then
+      ensure_source || exit 1
+    fi
+    if [[ -d "$SRC_DIR/.git" ]] && command -v git >/dev/null 2>&1; then
+      echo "[VNDE] Dang pull source..."
+      git -C "$SRC_DIR" pull --ff-only || true
+    fi
+    installer="$(resolve_installer || true)"
+    [[ -z "${installer:-}" ]] && { echo "[VNDE] Khong tim thay install-vnde.sh"; exit 1; }
+    exec "$installer" --profile gnome --no-packages "$@"
+    ;;
+  terminal)
+    shift
+    exec vn-terminal "$@"
+    ;;
+  menu)
+    exec vn-menu
+    ;;
+  appcenter)
+    exec vn-app-store
+    ;;
+  news)
+    exec vn-news
+    ;;
+  music)
+    exec vn-music
+    ;;
+  doctor)
+    echo "VNDE_SOURCE_DIR=$SRC_DIR"
+    echo "VNDE_REPO_URL=$REPO_URL"
+    echo "installer=$(resolve_installer || echo 'NOT_FOUND')"
+    echo "PATH=$PATH"
+    ;;
+  *)
+    usage
+    [[ -n "$cmd" ]] && exit 1
+    ;;
+esac

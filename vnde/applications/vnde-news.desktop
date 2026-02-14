@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=VN News
+Comment=Doc tin tuc trong ung dung VN News
+Exec=vn-news
+Type=Application
+Categories=Network;News;
+Icon=vnde-news
+Terminal=false

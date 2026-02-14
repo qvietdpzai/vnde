@@ -1,0 +1,41 @@
+* {
+  bg: #8f1118;
+  bg-alt: #0f1a14;
+  fg: #f5f0dc;
+  accent: #ffde00;
+  urgent: #da251d;
+  selected: #0a5c36;
+}
+window {
+  width: 42%;
+  location: north;
+  y-offset: 13%;
+  border: 2px;
+  border-color: @accent;
+  border-radius: 12px;
+  background-color: @bg-alt;
+}
+mainbox { padding: 14px; background-color: transparent; }
+inputbar {
+  background-color: @bg;
+  text-color: @fg;
+  border: 1px;
+  border-color: @accent;
+  border-radius: 8px;
+  padding: 8px;
+}
+listview {
+  lines: 10;
+  columns: 1;
+  dynamic: false;
+  background-color: transparent;
+  text-color: @fg;
+}
+element {
+  padding: 8px;
+  border-radius: 8px;
+}
+element selected {
+  background-color: @selected;
+  text-color: @fg;
+}

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openbox_config xmlns="http://openbox.org/3.4/rc">
+  <focus>
+    <focusNew>yes</focusNew>
+    <followMouse>no</followMouse>
+  </focus>
+
+  <theme>
+    <name>Clearlooks</name>
+    <font place="ActiveWindow"><name>Noto Sans</name><size>10</size><weight>bold</weight><slant>normal</slant></font>
+    <font place="InactiveWindow"><name>Noto Sans</name><size>10</size><weight>normal</weight><slant>normal</slant></font>
+    <font place="MenuHeader"><name>Noto Sans</name><size>10</size><weight>bold</weight><slant>normal</slant></font>
+    <font place="MenuItem"><name>Noto Sans</name><size>10</size><weight>normal</weight><slant>normal</slant></font>
+    <font place="OnScreenDisplay"><name>Noto Sans</name><size>10</size><weight>normal</weight><slant>normal</slant></font>
+  </theme>
+
+  <desktops>
+    <number>4</number>
+    <names>
+      <name>Làm Việc</name>
+      <name>Web</name>
+      <name>Giải Trí</name>
+      <name>Hệ Thống</name>
+    </names>
+  </desktops>
+
+  <keyboard>
+    <keybind key="W-Return"><action name="Execute"><command>vn-terminal</command></action></keybind>
+    <keybind key="W-space"><action name="Execute"><command>vn-menu</command></action></keybind>
+    <keybind key="W-d"><action name="Execute"><command>rofi -show drun -i -theme ~/.config/vnde/rofi/vnde.rasi</command></action></keybind>
+    <keybind key="W-w"><action name="Execute"><command>firefox</command></action></keybind>
+    <keybind key="W-e"><action name="Execute"><command>thunar</command></action></keybind>
+    <keybind key="W-a"><action name="Execute"><command>vn-app-store</command></action></keybind>
+    <keybind key="W-n"><action name="Execute"><command>vn-news</command></action></keybind>
+    <keybind key="W-m"><action name="Execute"><command>vn-music</command></action></keybind>
+    <keybind key="W-k"><action name="Execute"><command>xterm -e sh -lc 'docker ps; echo; echo "Nhan Enter de thoat"; read -r _'</command></action></keybind>
+    <keybind key="W-v"><action name="Execute"><command>vn-sound-popup</command></action></keybind>
+    <keybind key="A-F4"><action name="Close"/></keybind>
+  </keyboard>
+</openbox_config>

@@ -1,0 +1,52 @@
+# VNDE tint2 panel
+panel_items = PTSBC
+panel_size = 100% 42
+panel_position = top center horizontal
+panel_background_id = 1
+wm_menu = 1
+panel_layer = top
+
+# Taskbar
+task_icon = 1
+task_text = 1
+task_centered = 1
+task_maximum_size = 200 36
+task_padding = 3 3 4
+
+# Systray for background apps
+systray_padding = 6 4 6
+systray_sort = ascending
+systray_monitor = 1
+systray_name_filter =
+
+font = Noto Sans 10
+clock_font = Noto Sans Bold 10
+clock_format = %a %d/%m %H:%M
+
+# Launchers
+launcher_item_app = /usr/share/applications/firefox.desktop
+launcher_item_app = /usr/share/applications/org.libreoffice.LibreOffice.desktop
+launcher_item_app = /usr/share/applications/vlc.desktop
+launcher_item_app = /usr/share/applications/thunar.desktop
+launcher_apps_dir = ~/.local/share/applications
+launcher_item_app = vnde-menu.desktop
+launcher_item_app = vnde-terminal.desktop
+launcher_item_app = vnde-app-store.desktop
+launcher_item_app = vnde-news.desktop
+launcher_item_app = vnde-music.desktop
+launcher_item_app = vnde-docker.desktop
+
+rounded = 6
+border_width = 2
+background_color = #8F1118 92
+border_color = #FFDE00 100
+
+# Background 1: panel
+rounded = 0
+border_width = 0
+background_color = #8F1118 88
+border_color = #8F1118 88
+background_color_hover = #C61F27 95
+border_color_hover = #FFDE00 100
+background_color_pressed = #0A5C36 95
+border_color_pressed = #FFDE00 100

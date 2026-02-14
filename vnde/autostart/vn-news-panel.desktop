@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=VN News Panel
+Exec=vn-news-panel
+X-GNOME-Autostart-enabled=true
+NoDisplay=true

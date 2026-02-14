@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=VN Music
+Comment=Nghe nhac truc tuyen
+Exec=vn-music
+Type=Application
+Categories=AudioVideo;Audio;
+Icon=vnde-music
+Terminal=false

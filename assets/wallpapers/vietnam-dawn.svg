@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3840" height="2160" viewBox="0 0 3840 2160">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8f1118"/>
+      <stop offset="55%" stop-color="#c61f27"/>
+      <stop offset="100%" stop-color="#0a5c36"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.5" cy="0.36" r="0.16">
+      <stop offset="0%" stop-color="#ffe875" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#ffde00" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="3840" height="2160" fill="url(#bg)"/>
+  <rect width="3840" height="2160" fill="url(#sun)"/>
+
+  <g opacity="0.18" fill="#f3c300">
+    <circle cx="350" cy="290" r="2"/>
+    <circle cx="720" cy="440" r="2"/>
+    <circle cx="1280" cy="350" r="2"/>
+    <circle cx="1830" cy="460" r="2"/>
+    <circle cx="2250" cy="330" r="2"/>
+    <circle cx="2780" cy="510" r="2"/>
+    <circle cx="3340" cy="400" r="2"/>
+  </g>
+
+  <g transform="translate(1920 780) scale(8)">
+    <polygon fill="#ffde00" points="0,-58 13,-18 56,-18 21,7 34,47 0,22 -34,47 -21,7 -56,-18 -13,-18"/>
+  </g>
+
+  <g opacity="0.23" fill="none" stroke="#f6d45d" stroke-width="12">
+    <path d="M0,1760 C260,1620 500,1900 760,1760 C1020,1620 1260,1900 1520,1760 C1780,1620 2020,1900 2280,1760 C2540,1620 2780,1900 3040,1760 C3300,1620 3540,1900 3840,1760"/>
+    <path d="M0,1860 C260,1720 500,2000 760,1860 C1020,1720 1260,2000 1520,1860 C1780,1720 2020,2000 2280,1860 C2540,1720 2780,2000 3040,1860 C3300,1720 3540,2000 3840,1860"/>
+  </g>
+
+  <rect y="1930" width="3840" height="230" fill="#0a5c36"/>
+  <text x="1920" y="2065" text-anchor="middle" fill="#f5f0dc" font-size="72" font-family="DejaVu Sans, Noto Sans, sans-serif" letter-spacing="7">
+    VIETNAM STYLE LINUX
+  </text>
+</svg>

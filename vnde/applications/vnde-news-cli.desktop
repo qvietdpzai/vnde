@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=VN News CLI
+Comment=Doc tin nhanh trong Terminal
+Exec=vn-terminal -e vn-news-cli
+Type=Application
+Categories=Network;News;Utility;
+Icon=vnde-news
+Terminal=false

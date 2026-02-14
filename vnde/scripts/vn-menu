@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+GUI_APP="$HOME/.local/share/vnde/gui/vn_menu_center.py"
+THEME="$HOME/.config/vnde/rofi/vnde.rasi"
+
+if [[ -f "$GUI_APP" ]] && command -v python3 >/dev/null 2>&1; then
+  exec python3 "$GUI_APP"
+fi
+
+if command -v rofi >/dev/null 2>&1; then
+  if [[ -f "$THEME" ]]; then
+    exec rofi -show drun -show-icons -drun-display-format "{name}" -theme "$THEME"
+  fi
+  exec rofi -show drun -show-icons -drun-display-format "{name}"
+fi
+
+# Fallback: open GNOME app overview (if available)
+if command -v gdbus >/dev/null 2>&1; then
+  gdbus call --session \
+    --dest org.gnome.Shell \
+    --object-path /org/gnome/Shell \
+    --method org.gnome.Shell.Eval \
+    "Main.overview.show();" >/dev/null 2>&1 || true
+fi
+
+# Last fallback
+if command -v gtk-launch >/dev/null 2>&1; then
+  gtk-launch org.gnome.Nautilus.desktop >/dev/null 2>&1 || true
+fi

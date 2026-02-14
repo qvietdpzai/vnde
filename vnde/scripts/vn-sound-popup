@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if command -v notify-send >/dev/null 2>&1; then
+  if command -v pactl >/dev/null 2>&1; then
+    vol=$(pactl get-sink-volume @DEFAULT_SINK@ | awk '{print $5; exit}')
+    mute=$(pactl get-sink-mute @DEFAULT_SINK@ | awk '{print $2}')
+    if [[ "$mute" == "yes" ]]; then
+      notify-send -u low "Am thanh" "Dang tat tieng"
+    else
+      notify-send -u low "Am thanh" "Muc am luong: $vol"
+    fi
+  else
+    notify-send -u low "Am thanh" "Mo pavucontrol de dieu chinh"
+  fi
+fi
+
+if command -v pavucontrol >/dev/null 2>&1; then
+  pavucontrol >/dev/null 2>&1 &
+fi

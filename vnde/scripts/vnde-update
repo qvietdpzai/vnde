@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SRC_DIR="${VNDE_SOURCE_DIR:-$HOME/.local/share/vnde/source}"
+
+if [[ ! -d "$SRC_DIR" ]]; then
+  echo "[VNDE] Khong tim thay source VNDE tai: $SRC_DIR"
+  echo "[VNDE] Hay chay installer goc truoc."
+  exit 1
+fi
+
+if command -v git >/dev/null 2>&1 && [[ -d "$SRC_DIR/.git" ]]; then
+  echo "[VNDE] Dang cap nhat source (git pull)..."
+  git -C "$SRC_DIR" pull --ff-only || true
+fi
+
+if [[ ! -x "$SRC_DIR/install-vnde.sh" ]]; then
+  echo "[VNDE] Khong tim thay install-vnde.sh trong source"
+  exit 1
+fi
+
+echo "[VNDE] Dang apply ban cap nhat..."
+exec "$SRC_DIR/install-vnde.sh" --profile gnome --no-packages "$@"

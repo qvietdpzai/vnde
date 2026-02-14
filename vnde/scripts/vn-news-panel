@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v notify-send >/dev/null 2>&1; then
+  exit 0
+fi
+
+if ! python3 -c 'import feedparser' >/dev/null 2>&1; then
+  exit 0
+fi
+
+while true; do
+  headline=$(python3 - <<'PY'
+import feedparser
+feed = feedparser.parse('https://vnexpress.net/rss/tin-moi-nhat.rss')
+if feed.entries:
+    print(feed.entries[0].title)
+PY
+)
+  if [[ -n "${headline:-}" ]]; then
+    notify-send -u low "VN News" "$headline"
+  fi
+  sleep 1800
+done

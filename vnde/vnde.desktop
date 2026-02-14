@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=VNDE (Vietnam Desktop)
+Comment=Custom Vietnam-oriented desktop session
+Exec=/home/%u/.local/bin/vnde-session
+TryExec=openbox
+Type=Application
+DesktopNames=VNDE

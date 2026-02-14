@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=VN Menu
+Comment=Menu ung dung rieng cho VNDE
+Exec=vn-menu
+Type=Application
+Categories=System;
+Icon=vnde-menu
+Terminal=false
