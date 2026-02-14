@@ -61,6 +61,8 @@ Usage:
   vnde news                   Open VN News
   vnde music                  Open VN Music
   vnde files                  Open VN File Manager
+  vnde helper                 Open VN HELPER
+  vnde supports               Open VN SUPPORTS
   vnde doctor                 Show current VNDE paths
 EOF_USAGE
 }
@@ -112,6 +114,12 @@ case "$cmd" in
     ;;
   files)
     exec vn-file-manager
+    ;;
+  helper)
+    exec vn-helper
+    ;;
+  supports)
+    exec vn-supports
     ;;
   doctor)
     echo "VNDE_SOURCE_DIR=$SRC_DIR"

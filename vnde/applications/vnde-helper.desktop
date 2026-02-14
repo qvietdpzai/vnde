@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=VN HELPER
+Comment=Cong cu tro giup nhanh cho nguoi dung VNDE
+Exec=vn-helper
+Type=Application
+Categories=Utility;System;
+Icon=vnde-helper
+Terminal=false

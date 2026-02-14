@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=VN SUPPORTS
+Comment=Lien he va nhan ho tro cho VNDE
+Exec=vn-supports
+Type=Application
+Categories=Network;Utility;
+Icon=vnde-supports
+Terminal=false
