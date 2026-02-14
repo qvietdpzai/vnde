@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import base64
 import json
 import os
 import time
@@ -7,10 +8,11 @@ import uuid
 import gi
 
 gi.require_version("Gtk", "4.0")
-from gi.repository import Gdk, GLib, Gtk
+from gi.repository import Gdk, GdkPixbuf, GLib, Gtk
 
 DATA_PATH = os.path.expanduser("~/.local/share/vnde/forum_posts.json")
 PEERS_PATH = os.path.expanduser("~/.local/share/vnde/forum_peers.json")
+IMG_CACHE_DIR = os.path.expanduser("~/.cache/vnde/forum_images")
 
 CSS = """
 window { background: #0f1115; }
@@ -54,6 +56,8 @@ class VNForum(Gtk.Application):
     def __init__(self):
         super().__init__(application_id="vn.de.forum")
         self.posts = []
+        self.selected_image_b64 = ""
+        self.selected_image_name = ""
 
     def do_activate(self):
         apply_css()
@@ -88,11 +92,19 @@ class VNForum(Gtk.Application):
         self.input_body = Gtk.TextView()
         self.input_body.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
         self.input_body.set_size_request(-1, 110)
+        attach_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        pick_img = Gtk.Button(label="Them anh")
+        pick_img.connect("clicked", self.on_pick_image)
+        self.image_info = Gtk.Label(label="Chua co anh", xalign=0)
+        self.image_info.add_css_class("meta")
+        attach_row.append(pick_img)
+        attach_row.append(self.image_info)
         post_btn = Gtk.Button(label="Dang bai")
         post_btn.add_css_class("suggested-action")
         post_btn.connect("clicked", self.on_post)
         form.append(self.input_title)
         form.append(self.input_body)
+        form.append(attach_row)
         form.append(post_btn)
 
         self.flow = Gtk.FlowBox()
@@ -120,7 +132,7 @@ class VNForum(Gtk.Application):
         t = self.input_title.get_text().strip()
         buf = self.input_body.get_buffer()
         btxt = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), False).strip()
-        if not t or not btxt:
+        if not t or (not btxt and not self.selected_image_b64):
             return
         self.posts.insert(
             0,
@@ -132,11 +144,18 @@ class VNForum(Gtk.Application):
                 "created": time.strftime("%d/%m/%Y %H:%M"),
                 "created_ts": int(time.time()),
                 "origin": os.uname().nodename,
+                "image_b64": self.selected_image_b64,
+                "image_name": self.selected_image_name,
+                "reactions": {"like": 0, "love": 0, "haha": 0},
+                "comments": [],
             },
         )
         save_posts(self.posts)
         self.input_title.set_text("")
         buf.set_text("")
+        self.selected_image_b64 = ""
+        self.selected_image_name = ""
+        self.image_info.set_label("Chua co anh")
         self.render_posts()
 
     def render_posts(self):
@@ -149,7 +168,7 @@ class VNForum(Gtk.Application):
         for p in self.posts:
             card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
             card.add_css_class("card")
-            card.set_size_request(560, 210)
+            card.set_size_request(560, -1)
 
             t = Gtk.Label(label=p.get("title", ""), xalign=0)
             t.add_css_class("title")
@@ -160,9 +179,17 @@ class VNForum(Gtk.Application):
             b.set_wrap(True)
             b.set_selectable(True)
 
+            img_widget = self.build_image_widget(p)
+            reactions = self.build_reaction_bar(p)
+            comments = self.build_comments_ui(p)
+
             card.append(t)
             card.append(m)
             card.append(b)
+            if img_widget is not None:
+                card.append(img_widget)
+            card.append(reactions)
+            card.append(comments)
             self.flow.insert(card, -1)
 
     def refresh_state(self):
@@ -177,6 +204,137 @@ class VNForum(Gtk.Application):
             peers = {}
         self.peer_label.set_label(f"Peers online: {len(peers)}")
         return True
+
+    def on_pick_image(self, _btn):
+        chooser = Gtk.FileChooserNative.new(
+            "Chon anh",
+            None,
+            Gtk.FileChooserAction.OPEN,
+            "_Mo",
+            "_Huy",
+        )
+        filter_img = Gtk.FileFilter()
+        filter_img.set_name("Anh")
+        filter_img.add_mime_type("image/png")
+        filter_img.add_mime_type("image/jpeg")
+        filter_img.add_mime_type("image/webp")
+        chooser.add_filter(filter_img)
+        chooser.connect("response", self.on_image_chosen)
+        chooser.show()
+
+    def on_image_chosen(self, chooser, response):
+        if response != Gtk.ResponseType.ACCEPT:
+            chooser.destroy()
+            return
+        f = chooser.get_file()
+        chooser.destroy()
+        if f is None:
+            return
+        path = f.get_path()
+        if not path or not os.path.isfile(path):
+            return
+        raw = b""
+        with open(path, "rb") as fp:
+            raw = fp.read()
+        if len(raw) > 2 * 1024 * 1024:
+            self.image_info.set_label("Anh qua lon (>2MB)")
+            return
+        self.selected_image_b64 = base64.b64encode(raw).decode("ascii")
+        self.selected_image_name = os.path.basename(path)
+        self.image_info.set_label(f"Da chon: {self.selected_image_name}")
+
+    def build_image_widget(self, post):
+        b64 = post.get("image_b64", "")
+        if not b64:
+            return None
+        try:
+            os.makedirs(IMG_CACHE_DIR, exist_ok=True)
+            out_path = os.path.join(IMG_CACHE_DIR, f"{post.get('id','img')}.bin")
+            raw = base64.b64decode(b64)
+            with open(out_path, "wb") as fp:
+                fp.write(raw)
+            loader = GdkPixbuf.PixbufLoader.new()
+            loader.write(raw)
+            loader.close()
+            pix = loader.get_pixbuf()
+            pic = Gtk.Picture.new_for_pixbuf(pix)
+            pic.set_can_shrink(True)
+            pic.set_size_request(520, 220)
+            return pic
+        except Exception:
+            return None
+
+    def build_reaction_bar(self, post):
+        row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        reacts = post.get("reactions", {})
+        if not isinstance(reacts, dict):
+            reacts = {"like": 0, "love": 0, "haha": 0}
+        post["reactions"] = reacts
+
+        defs = [
+            ("like", "👍"),
+            ("love", "❤️"),
+            ("haha", "😂"),
+        ]
+        for key, emo in defs:
+            count = int(reacts.get(key, 0))
+            btn = Gtk.Button(label=f"{emo} {count}")
+            btn.connect("clicked", self.on_react, post.get("id", ""), key)
+            row.append(btn)
+        return row
+
+    def on_react(self, _btn, post_id, key):
+        for p in self.posts:
+            if p.get("id") != post_id:
+                continue
+            reacts = p.setdefault("reactions", {"like": 0, "love": 0, "haha": 0})
+            reacts[key] = int(reacts.get(key, 0)) + 1
+            break
+        save_posts(self.posts)
+        self.render_posts()
+
+    def build_comments_ui(self, post):
+        wrap = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        comments = post.get("comments", [])
+        if not isinstance(comments, list):
+            comments = []
+            post["comments"] = comments
+
+        for c in comments[-4:]:
+            txt = f"{c.get('author','user')}: {c.get('text','')}"
+            lbl = Gtk.Label(label=txt, xalign=0)
+            lbl.add_css_class("meta")
+            lbl.set_wrap(True)
+            wrap.append(lbl)
+
+        row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        entry = Gtk.Entry(placeholder_text="Viet binh luan...")
+        send = Gtk.Button(label="Gui")
+        send.add_css_class("suggested-action")
+        send.connect("clicked", self.on_comment_send, post.get("id", ""), entry)
+        row.append(entry)
+        row.append(send)
+        wrap.append(row)
+        return wrap
+
+    def on_comment_send(self, _btn, post_id, entry):
+        text = entry.get_text().strip()
+        if not text:
+            return
+        for p in self.posts:
+            if p.get("id") != post_id:
+                continue
+            comments = p.setdefault("comments", [])
+            comments.append(
+                {
+                    "author": os.environ.get("USER", "user"),
+                    "text": text,
+                    "created_ts": int(time.time()),
+                }
+            )
+            break
+        save_posts(self.posts)
+        self.render_posts()
 
 
 if __name__ == "__main__":
