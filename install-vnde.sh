@@ -133,6 +133,8 @@ install_shared_files() {
   run_cmd "cp \"$ROOT_DIR/vnde/gui/vn_file_manager.py\" \"$HOME/.local/share/vnde/gui/vn_file_manager.py\""
   run_cmd "cp \"$ROOT_DIR/vnde/gui/vn_helper_center.py\" \"$HOME/.local/share/vnde/gui/vn_helper_center.py\""
   run_cmd "cp \"$ROOT_DIR/vnde/gui/vn_supports_center.py\" \"$HOME/.local/share/vnde/gui/vn_supports_center.py\""
+  run_cmd "cp \"$ROOT_DIR/vnde/gui/vn_forum_center.py\" \"$HOME/.local/share/vnde/gui/vn_forum_center.py\""
+  run_cmd "cp \"$ROOT_DIR/vnde/gui/vn_forum_node.py\" \"$HOME/.local/share/vnde/gui/vn_forum_node.py\""
 
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-app-store\" \"$HOME/.local/bin/vn-app-store\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-news\" \"$HOME/.local/bin/vn-news\""
@@ -141,6 +143,7 @@ install_shared_files() {
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-terminal\" \"$HOME/.local/bin/vn-terminal\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-helper\" \"$HOME/.local/bin/vn-helper\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-supports\" \"$HOME/.local/bin/vn-supports\""
+  run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-forum\" \"$HOME/.local/bin/vn-forum\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-terminal-context-menu\" \"$HOME/.local/bin/vn-terminal-context-menu\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/menu\" \"$HOME/.local/bin/menu\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-file-manager\" \"$HOME/.local/bin/vn-file-manager\""
@@ -152,8 +155,8 @@ install_shared_files() {
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vnde\" \"$HOME/.local/bin/vnde\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/bootstrap-vnde.sh\" \"$HOME/.local/bin/vnde-bootstrap\""
 
-  run_cmd "chmod +x \"$HOME/.local/share/vnde/gui/vn_app_center.py\" \"$HOME/.local/share/vnde/gui/vn_news_center.py\" \"$HOME/.local/share/vnde/gui/vn_music_center.py\" \"$HOME/.local/share/vnde/gui/vn_menu_center.py\" \"$HOME/.local/share/vnde/gui/vn_file_manager.py\" \"$HOME/.local/share/vnde/gui/vn_helper_center.py\" \"$HOME/.local/share/vnde/gui/vn_supports_center.py\""
-  run_cmd "chmod +x \"$HOME/.local/bin/vn-app-store\" \"$HOME/.local/bin/vn-news\" \"$HOME/.local/bin/vn-music\" \"$HOME/.local/bin/vn-menu\" \"$HOME/.local/bin/vn-terminal\" \"$HOME/.local/bin/vn-helper\" \"$HOME/.local/bin/vn-supports\" \"$HOME/.local/bin/vn-terminal-context-menu\" \"$HOME/.local/bin/menu\" \"$HOME/.local/bin/vn-file-manager\" \"$HOME/.local/bin/vn-sound-popup\" \"$HOME/.local/bin/vn-news-cli\" \"$HOME/.local/bin/vn-news-panel\" \"$HOME/.local/bin/vnde-install\" \"$HOME/.local/bin/vnde-update\" \"$HOME/.local/bin/vnde\" \"$HOME/.local/bin/vnde-bootstrap\""
+  run_cmd "chmod +x \"$HOME/.local/share/vnde/gui/vn_app_center.py\" \"$HOME/.local/share/vnde/gui/vn_news_center.py\" \"$HOME/.local/share/vnde/gui/vn_music_center.py\" \"$HOME/.local/share/vnde/gui/vn_menu_center.py\" \"$HOME/.local/share/vnde/gui/vn_file_manager.py\" \"$HOME/.local/share/vnde/gui/vn_helper_center.py\" \"$HOME/.local/share/vnde/gui/vn_supports_center.py\" \"$HOME/.local/share/vnde/gui/vn_forum_center.py\" \"$HOME/.local/share/vnde/gui/vn_forum_node.py\""
+  run_cmd "chmod +x \"$HOME/.local/bin/vn-app-store\" \"$HOME/.local/bin/vn-news\" \"$HOME/.local/bin/vn-music\" \"$HOME/.local/bin/vn-menu\" \"$HOME/.local/bin/vn-terminal\" \"$HOME/.local/bin/vn-helper\" \"$HOME/.local/bin/vn-supports\" \"$HOME/.local/bin/vn-forum\" \"$HOME/.local/bin/vn-terminal-context-menu\" \"$HOME/.local/bin/menu\" \"$HOME/.local/bin/vn-file-manager\" \"$HOME/.local/bin/vn-sound-popup\" \"$HOME/.local/bin/vn-news-cli\" \"$HOME/.local/bin/vn-news-panel\" \"$HOME/.local/bin/vnde-install\" \"$HOME/.local/bin/vnde-update\" \"$HOME/.local/bin/vnde\" \"$HOME/.local/bin/vnde-bootstrap\""
   run_cmd "sudo install -Dm755 \"$HOME/.local/bin/vnde-install\" /usr/local/bin/vnde-install || true"
   run_cmd "sudo install -Dm755 \"$HOME/.local/bin/vnde-update\" /usr/local/bin/vnde-update || true"
   run_cmd "sudo install -Dm755 \"$HOME/.local/bin/vnde\" /usr/local/bin/vnde || true"
@@ -167,6 +170,7 @@ install_shared_files() {
   run_cmd "cp \"$ROOT_DIR/vnde/applications/vnde-terminal.desktop\" \"$HOME/.local/share/applications/vnde-terminal.desktop\""
   run_cmd "cp \"$ROOT_DIR/vnde/applications/vnde-helper.desktop\" \"$HOME/.local/share/applications/vnde-helper.desktop\""
   run_cmd "cp \"$ROOT_DIR/vnde/applications/vnde-supports.desktop\" \"$HOME/.local/share/applications/vnde-supports.desktop\""
+  run_cmd "cp \"$ROOT_DIR/vnde/applications/vnde-forum.desktop\" \"$HOME/.local/share/applications/vnde-forum.desktop\""
   run_cmd "cp \"$ROOT_DIR/vnde/applications/vnde-file-manager.desktop\" \"$HOME/.local/share/applications/vnde-file-manager.desktop\""
   run_cmd "cp \"$ROOT_DIR/vnde/applications/vnde-docker.desktop\" \"$HOME/.local/share/applications/vnde-docker.desktop\""
 
@@ -179,6 +183,7 @@ install_shared_files() {
   run_cmd "cp \"$ROOT_DIR/vnde/icons/scalable/apps/vnde-terminal.svg\" \"$HOME/.local/share/icons/hicolor/scalable/apps/vnde-terminal.svg\""
   run_cmd "cp \"$ROOT_DIR/vnde/icons/scalable/apps/vnde-helper.svg\" \"$HOME/.local/share/icons/hicolor/scalable/apps/vnde-helper.svg\""
   run_cmd "cp \"$ROOT_DIR/vnde/icons/scalable/apps/vnde-supports.svg\" \"$HOME/.local/share/icons/hicolor/scalable/apps/vnde-supports.svg\""
+  run_cmd "cp \"$ROOT_DIR/vnde/icons/scalable/apps/vnde-forum.svg\" \"$HOME/.local/share/icons/hicolor/scalable/apps/vnde-forum.svg\""
   run_cmd "cp \"$ROOT_DIR/vnde/icons/scalable/apps/vnde-file-manager.svg\" \"$HOME/.local/share/icons/hicolor/scalable/apps/vnde-file-manager.svg\""
   run_cmd "cp \"$ROOT_DIR/vnde/icons/scalable/apps/vnde-docker.svg\" \"$HOME/.local/share/icons/hicolor/scalable/apps/vnde-docker.svg\""
 

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=VN FORUM
+Comment=Dien dan noi bo cua VNDE
+Exec=vn-forum
+Type=Application
+Categories=Network;Utility;
+Icon=vnde-forum
+Terminal=false

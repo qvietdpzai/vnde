@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Start LAN P2P forum node in background if not running.
+if ! python3 - <<'PY' >/dev/null 2>&1
+import json, urllib.request
+try:
+    with urllib.request.urlopen("http://127.0.0.1:17890/status", timeout=0.7) as r:
+        data = json.loads(r.read().decode("utf-8"))
+        raise SystemExit(0 if data.get("ok") else 1)
+except Exception:
+    raise SystemExit(1)
+PY
+then
+  nohup python3 "$HOME/.local/share/vnde/gui/vn_forum_node.py" >/tmp/vn-forum-node.log 2>&1 &
+fi
+
+exec python3 "$HOME/.local/share/vnde/gui/vn_forum_center.py"

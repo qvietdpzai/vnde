@@ -63,6 +63,8 @@ Usage:
   vnde files                  Open VN File Manager
   vnde helper                 Open VN HELPER
   vnde supports               Open VN SUPPORTS
+  vnde forum                  Open VN FORUM
+  vnde forum-node             Start VN FORUM P2P node
   vnde doctor                 Show current VNDE paths
 EOF_USAGE
 }
@@ -120,6 +122,12 @@ case "$cmd" in
     ;;
   supports)
     exec vn-supports
+    ;;
+  forum)
+    exec vn-forum
+    ;;
+  forum-node)
+    exec python3 "$HOME/.local/share/vnde/gui/vn_forum_node.py"
     ;;
   doctor)
     echo "VNDE_SOURCE_DIR=$SRC_DIR"
