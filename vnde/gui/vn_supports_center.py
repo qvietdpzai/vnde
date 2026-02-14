@@ -9,10 +9,11 @@ from gi.repository import Gdk, Gtk
 CSS = """
 window { background: #0f1115; }
 .hero { background: linear-gradient(110deg, #8f1118, #0a5c36); border-radius: 14px; padding: 14px; }
-.hero-title { font-size: 24px; font-weight: 800; color: #fdf5d8; }
-.hero-sub { color: #efe6c3; }
+.hero-title { font-size: 24px; font-weight: 800; color: #ffffff; }
+.hero-sub { color: #ffffff; font-weight: 700; }
 .card { background: #1b1f27; border: 1px solid #2d3442; border-radius: 14px; padding: 12px; }
-.title { font-size: 18px; font-weight: 700; }
+.title { font-size: 18px; font-weight: 800; color: #ffffff; }
+.body-text { color: #ffffff; font-weight: 700; }
 """
 
 SUPPORTS = [
@@ -71,10 +72,10 @@ class VNSupports(Gtk.Application):
             title = Gtk.Label(label=name, xalign=0)
             title.add_css_class("title")
             d = Gtk.Label(label=desc, xalign=0)
-            d.add_css_class("dim-label")
+            d.add_css_class("body-text")
             d.set_wrap(True)
             u = Gtk.Label(label=url, xalign=0)
-            u.add_css_class("dim-label")
+            u.add_css_class("body-text")
             u.set_wrap(True)
 
             btn = Gtk.Button(label="Mo")

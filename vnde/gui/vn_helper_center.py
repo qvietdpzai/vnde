@@ -9,10 +9,11 @@ from gi.repository import Gdk, Gtk
 CSS = """
 window { background: #0f1115; }
 .hero { background: linear-gradient(110deg, #0a5c36, #8f1118); border-radius: 14px; padding: 14px; }
-.hero-title { font-size: 24px; font-weight: 800; color: #fdf5d8; }
-.hero-sub { color: #efe6c3; }
+.hero-title { font-size: 24px; font-weight: 800; color: #ffffff; }
+.hero-sub { color: #ffffff; font-weight: 700; }
 .card { background: #1b1f27; border: 1px solid #2d3442; border-radius: 14px; padding: 12px; }
-.title { font-size: 18px; font-weight: 700; }
+.title { font-size: 18px; font-weight: 800; color: #ffffff; }
+.cmd-text { color: #ffffff; font-weight: 700; }
 """
 
 HELP_ITEMS = [
@@ -73,7 +74,7 @@ class VNHelper(Gtk.Application):
             title.add_css_class("title")
 
             cmd_lbl = Gtk.Label(label=cmd, xalign=0)
-            cmd_lbl.add_css_class("dim-label")
+            cmd_lbl.add_css_class("cmd-text")
             cmd_lbl.set_wrap(True)
 
             btn = Gtk.Button(label="Chay trong VN Terminal")
