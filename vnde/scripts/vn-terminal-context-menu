@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+have() { command -v "$1" >/dev/null 2>&1; }
+notice() {
+  if have notify-send; then
+    notify-send "VN Terminal" "$1"
+  else
+    printf '%s\n' "$1"
+  fi
+}
+
+pick_text() {
+  local p c
+  p="$(xclip -o -selection primary 2>/dev/null || true)"
+  c="$(xclip -o -selection clipboard 2>/dev/null || true)"
+  if [[ -n "$p" ]]; then
+    printf '%s' "$p"
+  else
+    printf '%s' "$c"
+  fi
+}
+
+menu() {
+  printf '%s\n' \
+    "Paste" \
+    "Copy" \
+    "Search with Google" \
+    "Search with DuckDuckGo" \
+    "Read-only shell"
+}
+
+if have rofi; then
+  choice="$(menu | rofi -dmenu -i -p 'VN Terminal menu' -theme-str 'window {width: 420px;}')"
+else
+  choice=""
+fi
+
+[[ -z "${choice:-}" ]] && exit 0
+
+case "$choice" in
+  "Paste")
+    if have xdotool; then
+      xdotool key --clearmodifiers Shift+Insert
+    else
+      notice "Thieu xdotool de paste bang menu."
+    fi
+    ;;
+  "Copy")
+    if have xclip; then
+      text="$(pick_text)"
+      if [[ -n "$text" ]]; then
+        printf '%s' "$text" | xclip -selection clipboard -in
+        notice "Da copy vao clipboard."
+      else
+        notice "Khong co noi dung de copy."
+      fi
+    else
+      notice "Thieu xclip de copy."
+    fi
+    ;;
+  "Search with Google"|"Search with DuckDuckGo")
+    text="$(pick_text)"
+    if [[ -z "$text" ]]; then
+      if have rofi; then
+        text="$(printf '' | rofi -dmenu -p 'Nhap tu khoa tim kiem')"
+      fi
+    fi
+    [[ -z "$text" ]] && exit 0
+    q="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote_plus(sys.argv[1]))' "$text")"
+    if [[ "$choice" == "Search with Google" ]]; then
+      xdg-open "https://www.google.com/search?q=$q" >/dev/null 2>&1 &
+    else
+      xdg-open "https://duckduckgo.com/?q=$q" >/dev/null 2>&1 &
+    fi
+    ;;
+  "Read-only shell")
+    if have xdotool; then
+      xdotool type --delay 1 "bash --restricted"
+      xdotool key Return
+    else
+      notice "Thieu xdotool de chay read-only shell."
+    fi
+    ;;
+esac

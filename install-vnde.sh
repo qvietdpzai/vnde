@@ -68,16 +68,16 @@ install_packages_gnome() {
   case "$pm" in
     apt)
       run_cmd "sudo apt-get update"
-      run_cmd "sudo apt-get install -y gnome-shell gnome-session gnome-shell-extensions gnome-tweaks gnome-shell-extension-manager gnome-software gnome-software-plugin-flatpak gnome-software-plugin-snap rofi flameshot ibus ibus-unikey fonts-noto-core fonts-noto-color-emoji papirus-icon-theme xdg-utils flatpak snapd docker.io docker-compose-v2 python3-gi python3-feedparser gir1.2-gtk-4.0 libnotify-bin"
+      run_cmd "sudo apt-get install -y gnome-shell gnome-session gnome-shell-extensions gnome-tweaks gnome-shell-extension-manager gnome-software gnome-software-plugin-flatpak gnome-software-plugin-snap rofi flameshot ibus ibus-unikey fonts-noto-core fonts-noto-color-emoji papirus-icon-theme xdg-utils flatpak snapd docker.io docker-compose-v2 python3-gi python3-feedparser gir1.2-gtk-4.0 libnotify-bin xclip xdotool"
       ;;
     dnf)
-      run_cmd "sudo dnf install -y gnome-shell gnome-session gnome-extensions-app gnome-tweaks gnome-software gnome-software-plugin-flatpak rofi flameshot ibus ibus-bamboo google-noto-sans-fonts google-noto-emoji-fonts papirus-icon-theme xdg-utils flatpak docker docker-compose python3-gobject python3-feedparser gtk4 libnotify"
+      run_cmd "sudo dnf install -y gnome-shell gnome-session gnome-extensions-app gnome-tweaks gnome-software gnome-software-plugin-flatpak rofi flameshot ibus ibus-bamboo google-noto-sans-fonts google-noto-emoji-fonts papirus-icon-theme xdg-utils flatpak docker docker-compose python3-gobject python3-feedparser gtk4 libnotify xclip xdotool"
       ;;
     pacman)
-      run_cmd "sudo pacman -Sy --noconfirm gnome-shell gnome-session gnome-shell-extensions gnome-tweaks gnome-software rofi flameshot ibus ibus-unikey noto-fonts noto-fonts-emoji papirus-icon-theme xdg-utils flatpak snapd docker docker-compose python-gobject python-feedparser gtk4 libnotify"
+      run_cmd "sudo pacman -Sy --noconfirm gnome-shell gnome-session gnome-shell-extensions gnome-tweaks gnome-software rofi flameshot ibus ibus-unikey noto-fonts noto-fonts-emoji papirus-icon-theme xdg-utils flatpak snapd docker docker-compose python-gobject python-feedparser gtk4 libnotify xclip xdotool"
       ;;
     zypper)
-      run_cmd "sudo zypper install -y gnome-shell gnome-session gnome-shell-extensions gnome-tweaks gnome-software gnome-software-plugin-flatpak rofi flameshot ibus-unikey google-noto-fonts papirus-icon-theme xdg-utils flatpak snapd docker docker-compose python3-gobject python3-feedparser gtk4-tools libnotify-tools"
+      run_cmd "sudo zypper install -y gnome-shell gnome-session gnome-shell-extensions gnome-tweaks gnome-software gnome-software-plugin-flatpak rofi flameshot ibus-unikey google-noto-fonts papirus-icon-theme xdg-utils flatpak snapd docker docker-compose python3-gobject python3-feedparser gtk4-tools libnotify-tools xclip xdotool"
       ;;
     *)
       warn "Unsupported package manager. Install dependencies manually."
@@ -90,7 +90,7 @@ install_packages_openbox() {
   case "$pm" in
     apt)
       run_cmd "sudo apt-get update"
-      run_cmd "sudo apt-get install -y openbox tint2 rofi picom feh thunar xterm ibus ibus-unikey fonts-noto-core fonts-noto-color-emoji papirus-icon-theme xdg-utils flatpak snapd docker.io docker-compose-v2 python3-gi python3-feedparser gir1.2-gtk-4.0"
+      run_cmd "sudo apt-get install -y openbox tint2 rofi picom feh thunar xterm ibus ibus-unikey fonts-noto-core fonts-noto-color-emoji papirus-icon-theme xdg-utils flatpak snapd docker.io docker-compose-v2 python3-gi python3-feedparser gir1.2-gtk-4.0 xclip xdotool"
       ;;
     *)
       warn "Openbox profile package list is tuned for apt only."
@@ -136,6 +136,7 @@ install_shared_files() {
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-music\" \"$HOME/.local/bin/vn-music\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-menu\" \"$HOME/.local/bin/vn-menu\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-terminal\" \"$HOME/.local/bin/vn-terminal\""
+  run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-terminal-context-menu\" \"$HOME/.local/bin/vn-terminal-context-menu\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-file-manager\" \"$HOME/.local/bin/vn-file-manager\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-sound-popup\" \"$HOME/.local/bin/vn-sound-popup\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-news-cli\" \"$HOME/.local/bin/vn-news-cli\""
@@ -146,7 +147,7 @@ install_shared_files() {
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/bootstrap-vnde.sh\" \"$HOME/.local/bin/vnde-bootstrap\""
 
   run_cmd "chmod +x \"$HOME/.local/share/vnde/gui/vn_app_center.py\" \"$HOME/.local/share/vnde/gui/vn_news_center.py\" \"$HOME/.local/share/vnde/gui/vn_music_center.py\" \"$HOME/.local/share/vnde/gui/vn_menu_center.py\" \"$HOME/.local/share/vnde/gui/vn_file_manager.py\""
-  run_cmd "chmod +x \"$HOME/.local/bin/vn-app-store\" \"$HOME/.local/bin/vn-news\" \"$HOME/.local/bin/vn-music\" \"$HOME/.local/bin/vn-menu\" \"$HOME/.local/bin/vn-terminal\" \"$HOME/.local/bin/vn-file-manager\" \"$HOME/.local/bin/vn-sound-popup\" \"$HOME/.local/bin/vn-news-cli\" \"$HOME/.local/bin/vn-news-panel\" \"$HOME/.local/bin/vnde-install\" \"$HOME/.local/bin/vnde-update\" \"$HOME/.local/bin/vnde\" \"$HOME/.local/bin/vnde-bootstrap\""
+  run_cmd "chmod +x \"$HOME/.local/bin/vn-app-store\" \"$HOME/.local/bin/vn-news\" \"$HOME/.local/bin/vn-music\" \"$HOME/.local/bin/vn-menu\" \"$HOME/.local/bin/vn-terminal\" \"$HOME/.local/bin/vn-terminal-context-menu\" \"$HOME/.local/bin/vn-file-manager\" \"$HOME/.local/bin/vn-sound-popup\" \"$HOME/.local/bin/vn-news-cli\" \"$HOME/.local/bin/vn-news-panel\" \"$HOME/.local/bin/vnde-install\" \"$HOME/.local/bin/vnde-update\" \"$HOME/.local/bin/vnde\" \"$HOME/.local/bin/vnde-bootstrap\""
   run_cmd "sudo install -Dm755 \"$HOME/.local/bin/vnde-install\" /usr/local/bin/vnde-install || true"
   run_cmd "sudo install -Dm755 \"$HOME/.local/bin/vnde-update\" /usr/local/bin/vnde-update || true"
   run_cmd "sudo install -Dm755 \"$HOME/.local/bin/vnde\" /usr/local/bin/vnde || true"
@@ -321,6 +322,8 @@ Lenh terminal:
 - vnde-install                # cai/ap dung VNDE (GNOME profile)
 - vnde-update                 # cap nhat source + ap dung lai config VNDE
 - vnde-bootstrap              # bootstrap tu repo roi cai tu dong
+- Alt + g trong VN Terminal   # tim nhanh tren internet
+- Chuot phai trong VN Terminal # mo menu Copy/Paste/Search/Read-only
 DONE
 }
 

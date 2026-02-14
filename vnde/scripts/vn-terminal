@@ -40,19 +40,36 @@ alias dps='docker ps'
 alias ports='ss -tulpn'
 mkcd() { mkdir -p "$1" && cd "$1"; }
 newscli() { vn-news-cli "${1:-vnexpress}"; }
+vn_web_search() {
+  local q="${*:-}"
+  [[ -z "$q" ]] && return 0
+  local enc
+  enc="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote_plus(" ".join(sys.argv[1:])))' "$q")"
+  xdg-open "https://www.google.com/search?q=$enc" >/dev/null 2>&1 &
+}
+vn_web_search_prompt() {
+  local q
+  read -erp "Tim tren internet: " q
+  [[ -n "$q" ]] && vn_web_search "$q"
+}
+search() { vn_web_search "$*"; }
 
 # Readline quality-of-life, including better paste handling
 bind 'set enable-bracketed-paste on'
 bind 'set completion-ignore-case on'
+bind -x '"\eg":vn_web_search_prompt'
 
 echo "Xin chao! Day la VN Terminal Pro."
-echo "Tip: newscli, mkcd <dir>, dps, gs"
+echo "Tip: newscli, mkcd <dir>, dps, gs, search <tu khoa>, Alt+g"
 BRC
 fi
 
 if [[ "${1:-}" == "-e" ]]; then
   shift
   CMD="$*"
+elif [[ "${1:-}" == "--readonly" ]]; then
+  shift
+  CMD="bash --restricted"
 else
   CMD=""
 fi
@@ -60,7 +77,7 @@ fi
 # For reliable mouse-left paste support, prefer xterm mode when available.
 if command -v xterm >/dev/null 2>&1; then
   XRM1='XTerm*selectToClipboard: true'
-  XRM2='XTerm*VT100.translations: #override\\n<Btn1Up>:insert-selection(CLIPBOARD)'
+  XRM2=$'XTerm*VT100.translations: #override\n<Btn1Up>:insert-selection(CLIPBOARD)\n<Btn3Down>:exec-formatted("vn-terminal-context-menu")'
   if [[ -n "$CMD" ]]; then
     exec xterm -xrm "$XRM1" -xrm "$XRM2" -fa "Noto Sans Mono" -fs 11 -bg "#0F1A14" -fg "#F5F0DC" -title "VN Terminal" -e bash --rcfile "$VN_BASHRC" -ic "$CMD; exec bash --rcfile '$VN_BASHRC'"
   fi
