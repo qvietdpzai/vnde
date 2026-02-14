@@ -7,11 +7,15 @@ wm_menu = 1
 panel_layer = top
 
 # Taskbar
+taskbar_mode = multi_desktop
+taskbar_hide_if_empty = 0
+taskbar_always_show_all_desktop_tasks = 1
 task_icon = 1
 task_text = 1
 task_centered = 1
 task_maximum_size = 200 36
 task_padding = 3 3 4
+task_tooltip = 1
 
 # Systray for background apps
 systray_padding = 6 4 6

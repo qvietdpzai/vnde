@@ -264,6 +264,13 @@ configure_gnome() {
     ext_list="$(gnome-extensions list 2>/dev/null || true)"
     if printf '%s\n' "$ext_list" | grep -q 'ubuntu-dock@ubuntu.com'; then
       run_cmd "gnome-extensions enable ubuntu-dock@ubuntu.com || true"
+      run_cmd "gsettings set org.gnome.shell.extensions.dash-to-dock show-favorites true || true"
+      run_cmd "gsettings set org.gnome.shell.extensions.dash-to-dock show-running true || true"
+      run_cmd "gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces false || true"
+      run_cmd "gsettings set org.gnome.shell.extensions.dash-to-dock isolate-monitors false || true"
+      run_cmd "gsettings set org.gnome.shell.extensions.dash-to-dock intellihide false || true"
+      run_cmd "gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed true || true"
+      run_cmd "gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize-or-previews' || true"
     fi
     if printf '%s\n' "$ext_list" | grep -q 'appindicatorsupport@rgcjonas.gmail.com'; then
       run_cmd "gnome-extensions enable appindicatorsupport@rgcjonas.gmail.com || true"
