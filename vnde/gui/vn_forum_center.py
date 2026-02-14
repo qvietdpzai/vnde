@@ -2,6 +2,8 @@
 import base64
 import json
 import os
+import shutil
+import subprocess
 import time
 import uuid
 
@@ -34,14 +36,22 @@ def ensure_data_file():
 
 def load_posts():
     ensure_data_file()
-    with open(DATA_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)
+    try:
+        with open(DATA_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            if isinstance(data, list):
+                return data
+    except Exception:
+        pass
+    return []
 
 
 def save_posts(posts):
     ensure_data_file()
-    with open(DATA_PATH, "w", encoding="utf-8") as f:
+    tmp = f"{DATA_PATH}.tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
         json.dump(posts, f, ensure_ascii=False, indent=2)
+    os.replace(tmp, DATA_PATH)
 
 
 def apply_css():
@@ -58,12 +68,14 @@ class VNForum(Gtk.Application):
         self.posts = []
         self.selected_image_b64 = ""
         self.selected_image_name = ""
+        self.last_posts_mtime = 0.0
 
     def do_activate(self):
         apply_css()
         self.posts = load_posts()
 
         win = Gtk.ApplicationWindow(application=self)
+        self.win = win
         win.set_title("VN FORUM")
         win.set_icon_name("vnde-forum")
         win.set_default_size(1280, 840)
@@ -193,8 +205,16 @@ class VNForum(Gtk.Application):
             self.flow.insert(card, -1)
 
     def refresh_state(self):
-        self.posts = load_posts()
-        self.render_posts()
+        try:
+            mtime = os.path.getmtime(DATA_PATH) if os.path.exists(DATA_PATH) else 0.0
+            focused = self.get_active_window().get_focus() if self.get_active_window() else None
+            typing_now = isinstance(focused, Gtk.Entry)
+            if mtime != self.last_posts_mtime and not typing_now:
+                self.posts = load_posts()
+                self.render_posts()
+                self.last_posts_mtime = mtime
+        except Exception:
+            pass
         peers = {}
         try:
             if os.path.exists(PEERS_PATH):
@@ -206,31 +226,9 @@ class VNForum(Gtk.Application):
         return True
 
     def on_pick_image(self, _btn):
-        chooser = Gtk.FileChooserNative.new(
-            "Chon anh",
-            None,
-            Gtk.FileChooserAction.OPEN,
-            "_Mo",
-            "_Huy",
-        )
-        filter_img = Gtk.FileFilter()
-        filter_img.set_name("Anh")
-        filter_img.add_mime_type("image/png")
-        filter_img.add_mime_type("image/jpeg")
-        filter_img.add_mime_type("image/webp")
-        chooser.add_filter(filter_img)
-        chooser.connect("response", self.on_image_chosen)
-        chooser.show()
-
-    def on_image_chosen(self, chooser, response):
-        if response != Gtk.ResponseType.ACCEPT:
-            chooser.destroy()
+        path = self.pick_image_path()
+        if not path:
             return
-        f = chooser.get_file()
-        chooser.destroy()
-        if f is None:
-            return
-        path = f.get_path()
         if not path or not os.path.isfile(path):
             return
         raw = b""
@@ -242,6 +240,39 @@ class VNForum(Gtk.Application):
         self.selected_image_b64 = base64.b64encode(raw).decode("ascii")
         self.selected_image_name = os.path.basename(path)
         self.image_info.set_label(f"Da chon: {self.selected_image_name}")
+
+    def pick_image_path(self):
+        filters = "Anh | *.png *.jpg *.jpeg *.webp"
+        try:
+            if shutil.which("zenity"):
+                p = subprocess.run(
+                    [
+                        "zenity",
+                        "--file-selection",
+                        "--title=Chon anh",
+                        "--file-filter=*.png *.jpg *.jpeg *.webp",
+                    ],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                if p.returncode == 0:
+                    return p.stdout.strip()
+                return ""
+            if shutil.which("kdialog"):
+                p = subprocess.run(
+                    ["kdialog", "--getopenfilename", os.path.expanduser("~"), filters],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                if p.returncode == 0:
+                    return p.stdout.strip()
+                return ""
+        except Exception:
+            return ""
+        self.image_info.set_label("Thieu bo chon file (cai zenity hoac kdialog)")
+        return ""
 
     def build_image_widget(self, post):
         b64 = post.get("image_b64", "")
