@@ -2,6 +2,8 @@
 set -euo pipefail
 
 have() { command -v "$1" >/dev/null 2>&1; }
+POS_FILE="$HOME/.config/vnde/terminal-menu.pos"
+STEP=60
 notice() {
   if have notify-send; then
     notify-send "VN Terminal" "$1"
@@ -21,17 +23,69 @@ pick_text() {
   fi
 }
 
-menu() {
-  printf '%s\n' \
-    "Paste" \
-    "Copy" \
-    "Search with Google" \
-    "Search with DuckDuckGo" \
-    "Read-only shell"
+capture_terminal_selection() {
+  if have xdotool; then
+    # GNOME Terminal copy selection shortcut.
+    xdotool key --clearmodifiers ctrl+shift+c >/dev/null 2>&1 || true
+    sleep 0.08
+  fi
 }
 
+menu() {
+  printf '%s\n' \
+    "1. Tim trong terminal" \
+    "2. Tim voi Google" \
+    "3. Tim voi DuckDuckGo" \
+    "4. Dan (Paste)" \
+    "5. Sao chep (Copy)" \
+    "6. Che do chi doc (Read-only)"
+}
+
+load_position() {
+  local mx my
+  mx=80
+  my=80
+  if [[ -f "$POS_FILE" ]]; then
+    read -r mx my < "$POS_FILE" || true
+  elif have xdotool; then
+    eval "$(xdotool getmouselocation --shell 2>/dev/null || true)"
+    mx="${X:-80}"
+    my="${Y:-80}"
+  fi
+  printf '%s %s\n' "${mx:-80}" "${my:-80}"
+}
+
+save_position() {
+  mkdir -p "$(dirname "$POS_FILE")"
+  printf '%s %s\n' "$1" "$2" > "$POS_FILE"
+}
+
+if [[ "${1:-}" == "--move" && -n "${2:-}" ]]; then
+  read -r px py <<<"$(load_position)"
+  case "$2" in
+    left)  px=$((px - STEP)) ;;
+    right) px=$((px + STEP)) ;;
+    up)    py=$((py - STEP)) ;;
+    down)  py=$((py + STEP)) ;;
+    *) exit 0 ;;
+  esac
+  save_position "$px" "$py"
+  exit 0
+fi
+
+if [[ "${1:-}" == "--center" ]]; then
+  save_position 500 220
+  exit 0
+fi
+
 if have rofi; then
-  choice="$(menu | rofi -dmenu -i -p 'VN Terminal menu' -theme-str 'window {width: 420px;}')"
+  theme="$HOME/.config/vnde/rofi/vn-terminal-menu.rasi"
+  read -r mx my <<<"$(load_position)"
+  if [[ -f "$theme" ]]; then
+    choice="$(menu | rofi -dmenu -i -normal-window -p 'VN Terminal' -theme "$theme" -location 1 -xoffset "$mx" -yoffset "$my")"
+  else
+    choice="$(menu | rofi -dmenu -i -normal-window -p 'VN Terminal' -location 1 -xoffset "$mx" -yoffset "$my" -theme-str 'window { width: 30%; } listview { lines: 6; }')"
+  fi
 else
   choice=""
 fi
@@ -39,14 +93,14 @@ fi
 [[ -z "${choice:-}" ]] && exit 0
 
 case "$choice" in
-  "Paste")
+  "4. Dan (Paste)")
     if have xdotool; then
       xdotool key --clearmodifiers Shift+Insert
     else
       notice "Thieu xdotool de paste bang menu."
     fi
     ;;
-  "Copy")
+  "5. Sao chep (Copy)")
     if have xclip; then
       text="$(pick_text)"
       if [[ -n "$text" ]]; then
@@ -59,22 +113,47 @@ case "$choice" in
       notice "Thieu xclip de copy."
     fi
     ;;
-  "Search with Google"|"Search with DuckDuckGo")
+  "1. Tim trong terminal")
+    if have xdotool; then
+      text="$(pick_text)"
+      if [[ -z "$text" ]]; then
+        if have rofi; then
+          if [[ -f "${theme:-}" ]]; then
+            text="$(printf '' | rofi -dmenu -p 'Nhap tu khoa can tim' -theme "$theme")"
+          else
+            text="$(printf '' | rofi -dmenu -p 'Nhap tu khoa can tim')"
+          fi
+        fi
+      fi
+      [[ -z "$text" ]] && exit 0
+      xdotool key --clearmodifiers ctrl+shift+f
+      sleep 0.12
+      xdotool type --clearmodifiers --delay 1 "$text"
+    else
+      notice "Thieu xdotool de tim trong terminal."
+    fi
+    ;;
+  "2. Tim voi Google"|"3. Tim voi DuckDuckGo")
+    capture_terminal_selection
     text="$(pick_text)"
     if [[ -z "$text" ]]; then
       if have rofi; then
-        text="$(printf '' | rofi -dmenu -p 'Nhap tu khoa tim kiem')"
+        if [[ -f "${theme:-}" ]]; then
+          text="$(printf '' | rofi -dmenu -p 'Nhap tu khoa' -theme "$theme")"
+        else
+          text="$(printf '' | rofi -dmenu -p 'Nhap tu khoa')"
+        fi
       fi
     fi
     [[ -z "$text" ]] && exit 0
     q="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote_plus(sys.argv[1]))' "$text")"
-    if [[ "$choice" == "Search with Google" ]]; then
+    if [[ "$choice" == "2. Tim voi Google" ]]; then
       xdg-open "https://www.google.com/search?q=$q" >/dev/null 2>&1 &
     else
       xdg-open "https://duckduckgo.com/?q=$q" >/dev/null 2>&1 &
     fi
     ;;
-  "Read-only shell")
+  "6. Che do chi doc (Read-only)")
     if have xdotool; then
       xdotool type --delay 1 "bash --restricted"
       xdotool key Return

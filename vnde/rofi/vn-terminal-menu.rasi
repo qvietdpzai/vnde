@@ -1,0 +1,65 @@
+* {
+  bg: #000000;
+  panel: transparent;
+  fg: #1f8f3a;
+  muted: #2f9f49;
+  accent: #2db44f;
+  selected: transparent;
+  border-subtle: #000000;
+}
+
+window {
+  width: 30%;
+  location: north west;
+  border: 0px;
+  border-color: @bg;
+  border-radius: 16px;
+  background-color: @bg;
+}
+
+mainbox {
+  padding: 12px 12px 10px 12px;
+  background-color: transparent;
+}
+
+inputbar {
+  background-color: transparent;
+  text-color: @fg;
+  border: 0px;
+  border-color: transparent;
+  border-radius: 10px;
+  padding: 4px 2px;
+}
+
+prompt {
+  text-color: @accent;
+  font: "Noto Sans Bold 14";
+}
+
+listview {
+  lines: 6;
+  columns: 1;
+  background-color: transparent;
+  spacing: 2px;
+  margin: 10px 0 2px 0;
+}
+
+element {
+  border: 1px;
+  border-color: transparent;
+  border-radius: 8px;
+  padding: 7px 2px;
+  background-color: transparent;
+  text-color: @fg;
+}
+
+element selected {
+  background-color: transparent;
+  border-color: #ffd700;
+  text-color: @fg;
+}
+
+element-text {
+  text-color: inherit;
+  font: "Noto Sans Bold 13";
+}

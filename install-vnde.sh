@@ -123,6 +123,7 @@ install_shared_files() {
   fi
 
   run_cmd "cp \"$ROOT_DIR/vnde/rofi/vnde.rasi\" \"$HOME/.config/vnde/rofi/vnde.rasi\""
+  run_cmd "cp \"$ROOT_DIR/vnde/rofi/vn-terminal-menu.rasi\" \"$HOME/.config/vnde/rofi/vn-terminal-menu.rasi\""
   run_cmd "cp \"$ROOT_DIR/assets/wallpapers/vietnam-dawn.svg\" \"$HOME/.local/share/backgrounds/vietnam-dawn.svg\""
 
   run_cmd "cp \"$ROOT_DIR/vnde/gui/vn_app_center.py\" \"$HOME/.local/share/vnde/gui/vn_app_center.py\""
@@ -137,6 +138,7 @@ install_shared_files() {
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-menu\" \"$HOME/.local/bin/vn-menu\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-terminal\" \"$HOME/.local/bin/vn-terminal\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-terminal-context-menu\" \"$HOME/.local/bin/vn-terminal-context-menu\""
+  run_cmd "cp \"$ROOT_DIR/vnde/scripts/menu\" \"$HOME/.local/bin/menu\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-file-manager\" \"$HOME/.local/bin/vn-file-manager\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-sound-popup\" \"$HOME/.local/bin/vn-sound-popup\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-news-cli\" \"$HOME/.local/bin/vn-news-cli\""
@@ -147,7 +149,7 @@ install_shared_files() {
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/bootstrap-vnde.sh\" \"$HOME/.local/bin/vnde-bootstrap\""
 
   run_cmd "chmod +x \"$HOME/.local/share/vnde/gui/vn_app_center.py\" \"$HOME/.local/share/vnde/gui/vn_news_center.py\" \"$HOME/.local/share/vnde/gui/vn_music_center.py\" \"$HOME/.local/share/vnde/gui/vn_menu_center.py\" \"$HOME/.local/share/vnde/gui/vn_file_manager.py\""
-  run_cmd "chmod +x \"$HOME/.local/bin/vn-app-store\" \"$HOME/.local/bin/vn-news\" \"$HOME/.local/bin/vn-music\" \"$HOME/.local/bin/vn-menu\" \"$HOME/.local/bin/vn-terminal\" \"$HOME/.local/bin/vn-terminal-context-menu\" \"$HOME/.local/bin/vn-file-manager\" \"$HOME/.local/bin/vn-sound-popup\" \"$HOME/.local/bin/vn-news-cli\" \"$HOME/.local/bin/vn-news-panel\" \"$HOME/.local/bin/vnde-install\" \"$HOME/.local/bin/vnde-update\" \"$HOME/.local/bin/vnde\" \"$HOME/.local/bin/vnde-bootstrap\""
+  run_cmd "chmod +x \"$HOME/.local/bin/vn-app-store\" \"$HOME/.local/bin/vn-news\" \"$HOME/.local/bin/vn-music\" \"$HOME/.local/bin/vn-menu\" \"$HOME/.local/bin/vn-terminal\" \"$HOME/.local/bin/vn-terminal-context-menu\" \"$HOME/.local/bin/menu\" \"$HOME/.local/bin/vn-file-manager\" \"$HOME/.local/bin/vn-sound-popup\" \"$HOME/.local/bin/vn-news-cli\" \"$HOME/.local/bin/vn-news-panel\" \"$HOME/.local/bin/vnde-install\" \"$HOME/.local/bin/vnde-update\" \"$HOME/.local/bin/vnde\" \"$HOME/.local/bin/vnde-bootstrap\""
   run_cmd "sudo install -Dm755 \"$HOME/.local/bin/vnde-install\" /usr/local/bin/vnde-install || true"
   run_cmd "sudo install -Dm755 \"$HOME/.local/bin/vnde-update\" /usr/local/bin/vnde-update || true"
   run_cmd "sudo install -Dm755 \"$HOME/.local/bin/vnde\" /usr/local/bin/vnde || true"
@@ -247,13 +249,14 @@ configure_gnome() {
 
   run_cmd "gsettings set org.gnome.shell favorite-apps \"['vnde-file-manager.desktop','vnde-app-store.desktop','vnde-news.desktop','vnde-music.desktop','vnde-terminal.desktop','firefox.desktop','org.gnome.Software.desktop']\""
 
-  run_cmd "gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings \"['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/vnde-menu/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/vnde-store/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/vnde-news/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/vnde-music/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/vnde-files/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/vnde-shot/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/vnde-news-cli/']\""
+  run_cmd "gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings \"['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/vnde-menu/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/vnde-store/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/vnde-news/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/vnde-music/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/vnde-files/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/vnde-term-menu/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/vnde-shot/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/vnde-news-cli/']\""
 
   set_gnome_keybinding "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/vnde-menu/" "VN Menu" "vn-menu" "<Super>space"
   set_gnome_keybinding "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/vnde-store/" "VN App Center" "vn-app-store" "<Super>a"
   set_gnome_keybinding "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/vnde-news/" "VN News" "vn-news" "<Super>n"
   set_gnome_keybinding "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/vnde-music/" "VN Music" "vn-music" "<Super>m"
   set_gnome_keybinding "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/vnde-files/" "VN File Manager" "vn-file-manager" "<Super>e"
+  set_gnome_keybinding "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/vnde-term-menu/" "VN Terminal Menu" "vn-terminal-context-menu" "<Ctrl><Alt>s"
   set_gnome_keybinding "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/vnde-shot/" "VN Screenshot" "flameshot gui" "Print"
   set_gnome_keybinding "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/vnde-news-cli/" "VN News CLI" "vn-terminal -e vn-news-cli" "<Super><Shift>n"
 
@@ -315,6 +318,7 @@ Phim tat:
 - Super + Shift + N: VN News CLI (Terminal)
 - Super + M: VN Music (GUI)
 - Super + E: VN File Manager
+- Ctrl + Alt + S: VN Terminal Menu
 - Print: Flameshot
 
 Lenh terminal:
