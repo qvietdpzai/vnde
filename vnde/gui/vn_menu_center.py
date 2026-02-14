@@ -7,22 +7,25 @@ gi.require_version("Gtk", "4.0")
 from gi.repository import Gdk, Gtk
 
 MENU_ITEMS = [
-    ("He thong", "VN App Center", "Mo kho ung dung VNDE", "vn-app-store"),
-    ("He thong", "VN Terminal", "Terminal phong cach VNDE", "vn-terminal"),
-    ("Tin tuc", "VN News", "Doc tin trong giao dien GUI", "vn-news"),
-    ("Tin tuc", "VN News CLI", "Doc tin nhanh trong terminal", "vn-terminal -e vn-news-cli"),
-    ("Giai tri", "VN Music", "Mo trung tam am nhac", "vn-music"),
-    ("He thong", "Docker", "Mo trang thai docker", "vnde-docker.desktop"),
-    ("He thong", "Settings", "Mo cai dat GNOME", "gnome-control-center"),
-    ("Ung dung", "Firefox", "Trinh duyet web", "firefox"),
-    ("Ung dung", "Files", "Quan ly file", "nautilus"),
+    ("He thong", "VN App Center", "Kho ung dung dep cua VNDE", "vn-app-store", "vnde-app-store"),
+    ("He thong", "VN Terminal", "Terminal phong cach VNDE", "vn-terminal", "vnde-terminal"),
+    ("Tin tuc", "VN News", "Doc tin trong giao dien GUI", "vn-news", "vnde-news"),
+    ("Tin tuc", "VN News CLI", "Doc tin nhanh trong terminal", "vn-terminal -e vn-news-cli", "vnde-news"),
+    ("Giai tri", "VN Music", "Mo trung tam am nhac", "vn-music", "vnde-music"),
+    ("He thong", "Docker", "Mo trang thai docker", "vnde-docker.desktop", "vnde-docker"),
+    ("He thong", "Settings", "Cai dat he thong GNOME", "gnome-control-center", "preferences-system"),
+    ("Ung dung", "Firefox", "Trinh duyet web", "firefox", "firefox"),
+    ("Ung dung", "Files", "Quan ly file", "nautilus", "system-file-manager"),
 ]
 
 CSS = """
-window { background: #111315; }
-.card { background: #1f2328; border-radius: 14px; border: 1px solid #2d333b; padding: 10px; }
-.big-title { font-size: 20px; font-weight: 800; }
-.menu-title { font-size: 16px; font-weight: 700; }
+window { background: #0f1115; }
+.hero { background: linear-gradient(110deg, #8f1118, #0a5c36); border-radius: 14px; padding: 14px; }
+.hero-title { font-size: 24px; font-weight: 800; color: #fdf5d8; }
+.hero-sub { color: #efe6c3; }
+.card { background: #1b1f27; border-radius: 14px; border: 1px solid #2d3442; padding: 12px; }
+.menu-title { font-size: 17px; font-weight: 700; }
+.group { color: #8fb4ff; font-weight: 700; }
 """
 
 
@@ -42,21 +45,25 @@ class VNMenu(Gtk.Application):
         apply_css()
         self.win = Gtk.ApplicationWindow(application=self)
         self.win.set_title("VN Menu")
-        self.win.fullscreen()
+        self.win.set_default_size(1280, 840)
 
         root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
-        root.set_margin_top(16)
-        root.set_margin_bottom(16)
-        root.set_margin_start(16)
-        root.set_margin_end(16)
+        root.set_margin_top(14)
+        root.set_margin_bottom(14)
+        root.set_margin_start(14)
+        root.set_margin_end(14)
 
-        top = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-        title = Gtk.Label(label="VN Menu", xalign=0)
-        title.add_css_class("big-title")
-        self.search = Gtk.SearchEntry(placeholder_text="Tim ung dung, chuc nang...")
+        hero = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        hero.add_css_class("hero")
+        t = Gtk.Label(label="VN Menu", xalign=0)
+        t.add_css_class("hero-title")
+        s = Gtk.Label(label="Tat ca cong cu VNDE trong mot noi", xalign=0)
+        s.add_css_class("hero-sub")
+        hero.append(t)
+        hero.append(s)
+
+        self.search = Gtk.SearchEntry(placeholder_text="Tim ung dung, vi du: nhac, tin tuc, terminal...")
         self.search.connect("search-changed", self.render)
-        top.append(title)
-        top.append(self.search)
 
         self.flow = Gtk.FlowBox()
         self.flow.set_selection_mode(Gtk.SelectionMode.NONE)
@@ -66,42 +73,59 @@ class VNMenu(Gtk.Application):
         self.flow.set_row_spacing(12)
 
         sc = Gtk.ScrolledWindow()
+        sc.set_vexpand(True)
+        sc.set_hexpand(True)
         sc.set_child(self.flow)
 
-        root.append(top)
+        root.append(hero)
+        root.append(self.search)
         root.append(sc)
         self.win.set_child(root)
+
         self.render()
         self.win.present()
 
     def render(self, *_args):
         term = self.search.get_text().strip().lower()
+
         child = self.flow.get_first_child()
         while child is not None:
             nxt = child.get_next_sibling()
             self.flow.remove(child)
             child = nxt
 
-        for group, name, desc, cmd in MENU_ITEMS:
+        for group, name, desc, cmd, icon_name in MENU_ITEMS:
             blob = f"{group} {name} {desc}".lower()
             if term and term not in blob:
                 continue
 
-            card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+            card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
             card.add_css_class("card")
-            card.set_size_request(320, 150)
+            card.set_size_request(320, 190)
 
-            t = Gtk.Label(label=f"[{group}] {name}", xalign=0)
+            g = Gtk.Label(label=group, xalign=0)
+            g.add_css_class("group")
+
+            top = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+            icon = Gtk.Image.new_from_icon_name(icon_name)
+            icon.set_pixel_size(30)
+            title_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+            t = Gtk.Label(label=name, xalign=0)
             t.add_css_class("menu-title")
             d = Gtk.Label(label=desc, xalign=0)
             d.add_css_class("dim-label")
             d.set_wrap(True)
+            title_box.append(t)
+            title_box.append(d)
+            top.append(icon)
+            top.append(title_box)
+
             b = Gtk.Button(label="Mo")
             b.add_css_class("suggested-action")
             b.connect("clicked", self.on_open, cmd)
 
-            card.append(t)
-            card.append(d)
+            card.append(g)
+            card.append(top)
             card.append(b)
             self.flow.insert(card, -1)
 

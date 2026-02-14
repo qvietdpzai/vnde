@@ -9,24 +9,26 @@ gi.require_version("Gtk", "4.0")
 from gi.repository import Gdk, GLib, Gtk
 
 APPS = [
-    {"id": "firefox", "name": "Firefox", "desc": "Trinh duyet web", "native": "firefox", "launch": "firefox"},
-    {"id": "chrome", "name": "Google Chrome", "desc": "Trinh duyet Google", "native": "google-chrome-stable", "launch": "google-chrome-stable"},
-    {"id": "vlc", "name": "VLC", "desc": "Xem video va nghe nhac", "native": "vlc", "launch": "vlc"},
-    {"id": "libreoffice", "name": "LibreOffice", "desc": "Bo ung dung van phong", "native": "libreoffice", "launch": "libreoffice"},
-    {"id": "telegram", "name": "Telegram", "desc": "Nhan tin", "native": "telegram-desktop", "launch": "telegram-desktop"},
-    {"id": "vscode", "name": "VS Code", "desc": "Lap trinh", "native": "code", "launch": "code"},
-    {"id": "gimp", "name": "GIMP", "desc": "Sua anh", "native": "gimp", "launch": "gimp"},
-    {"id": "obs", "name": "OBS Studio", "desc": "Quay man hinh", "native": "obs-studio", "launch": "obs"},
-    {"id": "docker", "name": "Docker", "desc": "Nen tang container", "native": "docker.io", "launch": "vn-terminal -e 'docker ps'"},
+    {"id": "firefox", "name": "Firefox", "desc": "Trinh duyet web", "native": "firefox", "launch": "firefox", "icon": "firefox"},
+    {"id": "chrome", "name": "Google Chrome", "desc": "Trinh duyet Google", "native": "google-chrome-stable", "launch": "google-chrome-stable", "icon": "google-chrome"},
+    {"id": "vlc", "name": "VLC", "desc": "Xem video va nghe nhac", "native": "vlc", "launch": "vlc", "icon": "vlc"},
+    {"id": "libreoffice", "name": "LibreOffice", "desc": "Bo ung dung van phong", "native": "libreoffice", "launch": "libreoffice", "icon": "libreoffice-startcenter"},
+    {"id": "telegram", "name": "Telegram", "desc": "Nhan tin", "native": "telegram-desktop", "launch": "telegram-desktop", "icon": "telegram"},
+    {"id": "vscode", "name": "VS Code", "desc": "Lap trinh", "native": "code", "launch": "code", "icon": "code"},
+    {"id": "gimp", "name": "GIMP", "desc": "Sua anh", "native": "gimp", "launch": "gimp", "icon": "gimp"},
+    {"id": "obs", "name": "OBS Studio", "desc": "Quay man hinh", "native": "obs-studio", "launch": "obs", "icon": "com.obsproject.Studio"},
+    {"id": "docker", "name": "Docker", "desc": "Nen tang container", "native": "docker.io", "launch": "vn-terminal -e 'docker ps'", "icon": "vnde-docker"},
 ]
 
 CSS = """
-window { background: #121212; }
-.card { background: #1f1f1f; border-radius: 16px; border: 1px solid #2f2f2f; padding: 10px; }
-.big-title { font-size: 20px; font-weight: 800; }
-.app-title { font-size: 17px; font-weight: 700; }
-.muted { color: #bbbbbb; }
-.status { background: #1f2a1f; color: #d8ffd8; border-radius: 10px; padding: 8px 12px; }
+window { background: #0f1115; }
+.hero { background: linear-gradient(110deg, #8f1118, #0a5c36); border-radius: 14px; padding: 14px; }
+.hero-title { font-size: 24px; font-weight: 800; color: #fdf5d8; }
+.hero-sub { color: #efe6c3; }
+.status { background: #163522; color: #dff8e8; border-radius: 10px; padding: 8px 12px; }
+.card { background: #1b1f27; border: 1px solid #2d3442; border-radius: 14px; padding: 12px; }
+.app-title { font-size: 18px; font-weight: 750; }
+.muted { color: #b9bfca; }
 .searchbox { border-radius: 12px; }
 """
 
@@ -65,21 +67,28 @@ def run_root(cmd):
     return subprocess.run(["sh", "-lc", f"sudo {cmd}"], capture_output=True, text=True)
 
 
-class Card(Gtk.Box):
+class AppCard(Gtk.Box):
     def __init__(self, app, parent):
-        super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        super().__init__(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
         self.app = app
         self.parent = parent
         self.add_css_class("card")
-        self.set_size_request(340, 150)
 
+        icon = Gtk.Image.new_from_icon_name(app.get("icon", "application-x-executable"))
+        icon.set_pixel_size(38)
+
+        text_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3)
         title = Gtk.Label(label=app["name"], xalign=0)
         title.add_css_class("app-title")
         desc = Gtk.Label(label=app["desc"], xalign=0)
         desc.add_css_class("muted")
         desc.set_wrap(True)
+        text_box.append(title)
+        text_box.append(desc)
 
         actions = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        actions.set_halign(Gtk.Align.END)
+        actions.set_valign(Gtk.Align.CENTER)
         btn_install = Gtk.Button(label="Cai dat")
         btn_install.add_css_class("suggested-action")
         btn_install.connect("clicked", self.on_install)
@@ -88,8 +97,8 @@ class Card(Gtk.Box):
         actions.append(btn_install)
         actions.append(btn_open)
 
-        self.append(title)
-        self.append(desc)
+        self.append(icon)
+        self.append(text_box)
         self.append(actions)
 
     def on_open(self, _btn):
@@ -107,38 +116,42 @@ class VNAppCenter(Gtk.Application):
         apply_css()
         self.win = Gtk.ApplicationWindow(application=self)
         self.win.set_title("VN App Center")
-        self.win.fullscreen()
+        self.win.set_default_size(1280, 840)
 
         root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
-        root.set_margin_top(16)
-        root.set_margin_bottom(16)
-        root.set_margin_start(16)
-        root.set_margin_end(16)
+        root.set_margin_top(14)
+        root.set_margin_bottom(14)
+        root.set_margin_start(14)
+        root.set_margin_end(14)
 
-        top = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
-        title = Gtk.Label(label="VN App Center", xalign=0)
-        title.add_css_class("big-title")
+        hero = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        hero.add_css_class("hero")
+        t = Gtk.Label(label="VN App Center", xalign=0)
+        t.add_css_class("hero-title")
+        s = Gtk.Label(label="Quan ly ung dung dep, de nhin, de cai dat", xalign=0)
+        s.add_css_class("hero-sub")
+        hero.append(t)
+        hero.append(s)
+
+        row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
         self.search = Gtk.SearchEntry(placeholder_text="Tim app, vi du: browser, code, video...")
         self.search.add_css_class("searchbox")
         self.search.connect("search-changed", self.render)
-        top.append(title)
-        top.append(self.search)
-
         self.status = Gtk.Label(label="San sang", xalign=0)
         self.status.add_css_class("status")
+        row.append(self.search)
+        row.append(self.status)
 
-        self.flow = Gtk.FlowBox()
-        self.flow.set_selection_mode(Gtk.SelectionMode.NONE)
-        self.flow.set_min_children_per_line(3)
-        self.flow.set_max_children_per_line(5)
-        self.flow.set_column_spacing(12)
-        self.flow.set_row_spacing(12)
+        self.listbox = Gtk.ListBox()
+        self.listbox.set_selection_mode(Gtk.SelectionMode.NONE)
 
         sc = Gtk.ScrolledWindow()
-        sc.set_child(self.flow)
+        sc.set_vexpand(True)
+        sc.set_hexpand(True)
+        sc.set_child(self.listbox)
 
-        root.append(top)
-        root.append(self.status)
+        root.append(hero)
+        root.append(row)
         root.append(sc)
         self.win.set_child(root)
 
@@ -150,17 +163,19 @@ class VNAppCenter(Gtk.Application):
 
     def render(self, *_):
         term = self.search.get_text().strip().lower()
-        child = self.flow.get_first_child()
-        while child is not None:
-            next_child = child.get_next_sibling()
-            self.flow.remove(child)
-            child = next_child
+        while True:
+            r = self.listbox.get_row_at_index(0)
+            if r is None:
+                break
+            self.listbox.remove(r)
 
         for app in APPS:
             blob = f"{app['id']} {app['name']} {app['desc']}".lower()
             if term and term not in blob:
                 continue
-            self.flow.insert(Card(app, self), -1)
+            row = Gtk.ListBoxRow()
+            row.set_child(AppCard(app, self))
+            self.listbox.append(row)
 
     def install(self, app):
         cmd = install_cmd(app)
