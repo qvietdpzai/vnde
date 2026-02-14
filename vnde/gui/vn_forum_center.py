@@ -61,6 +61,7 @@ class VNForum(Gtk.Application):
 
         win = Gtk.ApplicationWindow(application=self)
         win.set_title("VN FORUM")
+        win.set_icon_name("vnde-forum")
         win.set_default_size(1280, 840)
 
         root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
@@ -179,4 +180,5 @@ class VNForum(Gtk.Application):
 
 
 if __name__ == "__main__":
+    GLib.set_prgname("vnde-forum")
     VNForum().run()

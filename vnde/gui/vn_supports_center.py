@@ -4,7 +4,7 @@ import webbrowser
 import gi
 
 gi.require_version("Gtk", "4.0")
-from gi.repository import Gdk, Gtk
+from gi.repository import Gdk, GLib, Gtk
 
 CSS = """
 window { background: #0f1115; }
@@ -40,6 +40,7 @@ class VNSupports(Gtk.Application):
         apply_css()
         win = Gtk.ApplicationWindow(application=self)
         win.set_title("VN SUPPORTS")
+        win.set_icon_name("vnde-supports")
         win.set_default_size(1200, 780)
 
         root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
@@ -101,4 +102,5 @@ class VNSupports(Gtk.Application):
 
 
 if __name__ == "__main__":
+    GLib.set_prgname("vnde-supports")
     VNSupports().run()

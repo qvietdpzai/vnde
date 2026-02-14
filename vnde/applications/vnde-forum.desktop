@@ -5,4 +5,5 @@ Exec=vn-forum
 Type=Application
 Categories=Network;Utility;
 Icon=vnde-forum
+StartupWMClass=vnde-forum
 Terminal=false

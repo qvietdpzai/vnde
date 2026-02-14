@@ -5,4 +5,5 @@ Exec=vn-news
 Type=Application
 Categories=Network;News;
 Icon=vnde-news
+StartupWMClass=vnde-news
 Terminal=false

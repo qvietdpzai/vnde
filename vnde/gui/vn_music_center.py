@@ -4,7 +4,7 @@ import webbrowser
 import gi
 
 gi.require_version("Gtk", "4.0")
-from gi.repository import Gdk, Gtk
+from gi.repository import Gdk, GLib, Gtk
 
 SERVICES = [
     ("Zing MP3", "Kho nhac Viet", "https://zingmp3.vn", "multimedia-player"),
@@ -39,6 +39,7 @@ class VNMusic(Gtk.Application):
         apply_css()
         win = Gtk.ApplicationWindow(application=self)
         win.set_title("VN Music")
+        win.set_icon_name("vnde-music")
         win.set_default_size(1280, 840)
 
         root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
@@ -104,4 +105,5 @@ class VNMusic(Gtk.Application):
 
 
 if __name__ == "__main__":
+    GLib.set_prgname("vnde-music")
     VNMusic().run()

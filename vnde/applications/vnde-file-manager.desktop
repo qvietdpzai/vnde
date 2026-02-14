@@ -5,4 +5,5 @@ Exec=vn-file-manager
 Type=Application
 Categories=System;FileManager;
 Icon=vnde-file-manager
+StartupWMClass=vnde-file-manager
 Terminal=false

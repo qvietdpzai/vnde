@@ -5,4 +5,5 @@ Exec=vn-app-store
 Type=Application
 Categories=System;PackageManager;
 Icon=vnde-app-store
+StartupWMClass=vnde-app-store
 Terminal=false

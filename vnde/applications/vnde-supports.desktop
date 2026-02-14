@@ -5,4 +5,5 @@ Exec=vn-supports
 Type=Application
 Categories=Network;Utility;
 Icon=vnde-supports
+StartupWMClass=vnde-supports
 Terminal=false

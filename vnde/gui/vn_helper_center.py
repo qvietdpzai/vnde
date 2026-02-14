@@ -4,7 +4,7 @@ import subprocess
 import gi
 
 gi.require_version("Gtk", "4.0")
-from gi.repository import Gdk, Gtk
+from gi.repository import Gdk, GLib, Gtk
 
 CSS = """
 window { background: #0f1115; }
@@ -41,6 +41,7 @@ class VNHelper(Gtk.Application):
         apply_css()
         win = Gtk.ApplicationWindow(application=self)
         win.set_title("VN HELPER")
+        win.set_icon_name("vnde-helper")
         win.set_default_size(1200, 780)
 
         root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
@@ -102,4 +103,5 @@ class VNHelper(Gtk.Application):
 
 
 if __name__ == "__main__":
+    GLib.set_prgname("vnde-helper")
     VNHelper().run()

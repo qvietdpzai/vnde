@@ -5,4 +5,5 @@ Exec=vn-helper
 Type=Application
 Categories=Utility;System;
 Icon=vnde-helper
+StartupWMClass=vnde-helper
 Terminal=false

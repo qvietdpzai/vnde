@@ -5,4 +5,5 @@ Exec=vn-music
 Type=Application
 Categories=AudioVideo;Audio;
 Icon=vnde-music
+StartupWMClass=vnde-music
 Terminal=false

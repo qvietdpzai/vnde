@@ -4,7 +4,7 @@ import subprocess
 import gi
 
 gi.require_version("Gtk", "4.0")
-from gi.repository import Gdk, Gtk
+from gi.repository import Gdk, GLib, Gtk
 
 MENU_ITEMS = [
     ("He thong", "VN App Center", "Kho ung dung dep cua VNDE", "vn-app-store", "vnde-app-store"),
@@ -48,6 +48,7 @@ class VNMenu(Gtk.Application):
         apply_css()
         self.win = Gtk.ApplicationWindow(application=self)
         self.win.set_title("VN Menu")
+        self.win.set_icon_name("vnde-menu")
         self.win.set_default_size(1280, 840)
 
         root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
@@ -141,4 +142,5 @@ class VNMenu(Gtk.Application):
 
 
 if __name__ == "__main__":
+    GLib.set_prgname("vnde-menu")
     VNMenu().run()

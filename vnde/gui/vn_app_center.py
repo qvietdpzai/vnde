@@ -120,6 +120,7 @@ class VNAppCenter(Gtk.Application):
         apply_css()
         self.win = Gtk.ApplicationWindow(application=self)
         self.win.set_title("VN App Center")
+        self.win.set_icon_name("vnde-app-store")
         self.win.set_default_size(1280, 840)
 
         root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
@@ -203,4 +204,5 @@ class VNAppCenter(Gtk.Application):
 
 
 if __name__ == "__main__":
+    GLib.set_prgname("vnde-app-store")
     VNAppCenter().run()

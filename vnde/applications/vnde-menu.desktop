@@ -5,4 +5,5 @@ Exec=vn-menu
 Type=Application
 Categories=System;
 Icon=vnde-menu
+StartupWMClass=vnde-menu
 Terminal=false

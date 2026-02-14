@@ -52,6 +52,7 @@ class VNNews(Gtk.Application):
         apply_css()
         self.win = Gtk.ApplicationWindow(application=self)
         self.win.set_title("VN News")
+        self.win.set_icon_name("vnde-news")
         self.win.set_default_size(1320, 860)
 
         root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
@@ -217,4 +218,5 @@ class VNNews(Gtk.Application):
 
 
 if __name__ == "__main__":
+    GLib.set_prgname("vnde-news")
     VNNews().run()
