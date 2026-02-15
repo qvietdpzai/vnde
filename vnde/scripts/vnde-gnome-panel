@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+CFG="$HOME/.config/vnde/tint2/tint2rc"
+
+if ! command -v tint2 >/dev/null 2>&1; then
+  exit 0
+fi
+
+if [[ ! -f "$CFG" ]]; then
+  exit 0
+fi
+
+# Keep a single panel instance for this config.
+if pgrep -af "tint2.*$CFG" >/dev/null 2>&1; then
+  exit 0
+fi
+
+tint2 -c "$CFG" >/dev/null 2>&1 &

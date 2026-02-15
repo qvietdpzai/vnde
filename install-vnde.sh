@@ -68,16 +68,16 @@ install_packages_gnome() {
   case "$pm" in
     apt)
       run_cmd "sudo apt-get update"
-      run_cmd "sudo apt-get install -y gnome-shell gnome-session gnome-shell-extensions gnome-tweaks gnome-shell-extension-manager gnome-software gnome-software-plugin-flatpak gnome-software-plugin-snap rofi flameshot ibus ibus-unikey fonts-noto-core fonts-noto-color-emoji papirus-icon-theme xdg-utils flatpak snapd docker.io docker-compose-v2 python3-gi python3-feedparser gir1.2-gtk-4.0 libnotify-bin xclip xdotool"
+      run_cmd "sudo apt-get install -y gnome-shell gnome-session gnome-shell-extensions gnome-tweaks gnome-shell-extension-manager gnome-software gnome-software-plugin-flatpak gnome-software-plugin-snap tint2 rofi flameshot ibus ibus-unikey fonts-noto-core fonts-noto-color-emoji papirus-icon-theme xdg-utils flatpak snapd docker.io docker-compose-v2 python3-gi python3-feedparser gir1.2-gtk-4.0 libnotify-bin xclip xdotool"
       ;;
     dnf)
-      run_cmd "sudo dnf install -y gnome-shell gnome-session gnome-extensions-app gnome-tweaks gnome-software gnome-software-plugin-flatpak rofi flameshot ibus ibus-bamboo google-noto-sans-fonts google-noto-emoji-fonts papirus-icon-theme xdg-utils flatpak docker docker-compose python3-gobject python3-feedparser gtk4 libnotify xclip xdotool"
+      run_cmd "sudo dnf install -y gnome-shell gnome-session gnome-extensions-app gnome-tweaks gnome-software gnome-software-plugin-flatpak tint2 rofi flameshot ibus ibus-bamboo google-noto-sans-fonts google-noto-emoji-fonts papirus-icon-theme xdg-utils flatpak docker docker-compose python3-gobject python3-feedparser gtk4 libnotify xclip xdotool"
       ;;
     pacman)
-      run_cmd "sudo pacman -Sy --noconfirm gnome-shell gnome-session gnome-shell-extensions gnome-tweaks gnome-software rofi flameshot ibus ibus-unikey noto-fonts noto-fonts-emoji papirus-icon-theme xdg-utils flatpak snapd docker docker-compose python-gobject python-feedparser gtk4 libnotify xclip xdotool"
+      run_cmd "sudo pacman -Sy --noconfirm gnome-shell gnome-session gnome-shell-extensions gnome-tweaks gnome-software tint2 rofi flameshot ibus ibus-unikey noto-fonts noto-fonts-emoji papirus-icon-theme xdg-utils flatpak snapd docker docker-compose python-gobject python-feedparser gtk4 libnotify xclip xdotool"
       ;;
     zypper)
-      run_cmd "sudo zypper install -y gnome-shell gnome-session gnome-shell-extensions gnome-tweaks gnome-software gnome-software-plugin-flatpak rofi flameshot ibus-unikey google-noto-fonts papirus-icon-theme xdg-utils flatpak snapd docker docker-compose python3-gobject python3-feedparser gtk4-tools libnotify-tools xclip xdotool"
+      run_cmd "sudo zypper install -y gnome-shell gnome-session gnome-shell-extensions gnome-tweaks gnome-software gnome-software-plugin-flatpak tint2 rofi flameshot ibus-unikey google-noto-fonts papirus-icon-theme xdg-utils flatpak snapd docker docker-compose python3-gobject python3-feedparser gtk4-tools libnotify-tools xclip xdotool"
       ;;
     *)
       warn "Unsupported package manager. Install dependencies manually."
@@ -113,7 +113,7 @@ setup_services() {
 
 install_shared_files() {
   local SOURCE_MIRROR="$HOME/.local/share/vnde/source"
-  run_cmd "mkdir -p \"$HOME/.config/vnde/rofi\" \"$HOME/.local/bin\" \"$HOME/.local/share/applications\" \"$HOME/.local/share/icons/hicolor/scalable/apps\" \"$HOME/.local/share/backgrounds\" \"$HOME/.local/share/vnde/gui\" \"$HOME/.local/share/vnde/source\" \"$HOME/.config/autostart\""
+  run_cmd "mkdir -p \"$HOME/.config/vnde/rofi\" \"$HOME/.config/vnde/tint2\" \"$HOME/.local/bin\" \"$HOME/.local/share/applications\" \"$HOME/.local/share/icons/hicolor/scalable/apps\" \"$HOME/.local/share/backgrounds\" \"$HOME/.local/share/vnde/gui\" \"$HOME/.local/share/vnde/source\" \"$HOME/.config/autostart\""
 
   # Keep a local source copy so users can run vnde-install / vnde-update from terminal.
   if [[ "$(realpath "$ROOT_DIR" 2>/dev/null || echo "$ROOT_DIR")" != "$(realpath "$SOURCE_MIRROR" 2>/dev/null || echo "$SOURCE_MIRROR")" ]]; then
@@ -158,9 +158,11 @@ install_shared_files() {
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vnde-update\" \"$HOME/.local/bin/vnde-update\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vnde\" \"$HOME/.local/bin/vnde\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/bootstrap-vnde.sh\" \"$HOME/.local/bin/vnde-bootstrap\""
+  run_cmd "cp \"$ROOT_DIR/vnde/scripts/vnde-gnome-panel\" \"$HOME/.local/bin/vnde-gnome-panel\""
+  run_cmd "cp \"$ROOT_DIR/vnde/tint2/tint2rc\" \"$HOME/.config/vnde/tint2/tint2rc\""
 
   run_cmd "chmod +x \"$HOME/.local/share/vnde/gui/vn_app_center.py\" \"$HOME/.local/share/vnde/gui/vn_news_center.py\" \"$HOME/.local/share/vnde/gui/vn_music_center.py\" \"$HOME/.local/share/vnde/gui/vn_menu_center.py\" \"$HOME/.local/share/vnde/gui/vn_file_manager.py\" \"$HOME/.local/share/vnde/gui/vn_helper_center.py\" \"$HOME/.local/share/vnde/gui/vn_supports_center.py\" \"$HOME/.local/share/vnde/gui/vn_setting_center.py\" \"$HOME/.local/share/vnde/gui/vn_monitor_center.py\" \"$HOME/.local/share/vnde/gui/vn_forum_center.py\" \"$HOME/.local/share/vnde/gui/vn_forum_node.py\""
-  run_cmd "chmod +x \"$HOME/.local/bin/vn-app-store\" \"$HOME/.local/bin/vn-news\" \"$HOME/.local/bin/vn-music\" \"$HOME/.local/bin/vn-menu\" \"$HOME/.local/bin/vn-terminal\" \"$HOME/.local/bin/vn-helper\" \"$HOME/.local/bin/vn-supports\" \"$HOME/.local/bin/vn-setting\" \"$HOME/.local/bin/vn-monitor\" \"$HOME/.local/bin/vn-forum\" \"$HOME/.local/bin/vn-terminal-context-menu\" \"$HOME/.local/bin/menu\" \"$HOME/.local/bin/vn-file-manager\" \"$HOME/.local/bin/vn-sound-popup\" \"$HOME/.local/bin/vn-news-cli\" \"$HOME/.local/bin/vn-news-panel\" \"$HOME/.local/bin/vnde-install\" \"$HOME/.local/bin/vnde-update\" \"$HOME/.local/bin/vnde\" \"$HOME/.local/bin/vnde-bootstrap\""
+  run_cmd "chmod +x \"$HOME/.local/bin/vn-app-store\" \"$HOME/.local/bin/vn-news\" \"$HOME/.local/bin/vn-music\" \"$HOME/.local/bin/vn-menu\" \"$HOME/.local/bin/vn-terminal\" \"$HOME/.local/bin/vn-helper\" \"$HOME/.local/bin/vn-supports\" \"$HOME/.local/bin/vn-setting\" \"$HOME/.local/bin/vn-monitor\" \"$HOME/.local/bin/vn-forum\" \"$HOME/.local/bin/vn-terminal-context-menu\" \"$HOME/.local/bin/menu\" \"$HOME/.local/bin/vn-file-manager\" \"$HOME/.local/bin/vn-sound-popup\" \"$HOME/.local/bin/vn-news-cli\" \"$HOME/.local/bin/vn-news-panel\" \"$HOME/.local/bin/vnde-install\" \"$HOME/.local/bin/vnde-update\" \"$HOME/.local/bin/vnde\" \"$HOME/.local/bin/vnde-bootstrap\" \"$HOME/.local/bin/vnde-gnome-panel\""
   run_cmd "sudo install -Dm755 \"$HOME/.local/bin/vnde-install\" /usr/local/bin/vnde-install || true"
   run_cmd "sudo install -Dm755 \"$HOME/.local/bin/vnde-update\" /usr/local/bin/vnde-update || true"
   run_cmd "sudo install -Dm755 \"$HOME/.local/bin/vnde\" /usr/local/bin/vnde || true"
@@ -181,6 +183,7 @@ install_shared_files() {
   run_cmd "cp \"$ROOT_DIR/vnde/applications/vnde-docker.desktop\" \"$HOME/.local/share/applications/vnde-docker.desktop\""
 
   run_cmd "cp \"$ROOT_DIR/vnde/autostart/vn-news-panel.desktop\" \"$HOME/.config/autostart/vn-news-panel.desktop\""
+  run_cmd "cp \"$ROOT_DIR/vnde/autostart/vnde-panel.desktop\" \"$HOME/.config/autostart/vnde-panel.desktop\""
 
   run_cmd "cp \"$ROOT_DIR/vnde/icons/scalable/apps/vnde-app-store.svg\" \"$HOME/.local/share/icons/hicolor/scalable/apps/vnde-app-store.svg\""
   run_cmd "cp \"$ROOT_DIR/vnde/icons/scalable/apps/vnde-news.svg\" \"$HOME/.local/share/icons/hicolor/scalable/apps/vnde-news.svg\""

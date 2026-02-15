@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=VNDE Panel
+Exec=vnde-gnome-panel
+OnlyShowIn=GNOME;
+X-GNOME-Autostart-enabled=true
+NoDisplay=true
