@@ -11,6 +11,7 @@ ISO_OUT="${2:-$PWD/VNOS-24.04.3.iso}"
 # Keep build artifacts outside source tree to avoid recursive rsync.
 WORKDIR="${WORKDIR:-/tmp/.build-vnde-iso}"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+SAFE_MODE="${SAFE_MODE:-1}"
 
 if [[ -z "$ISO_IN" || ! -f "$ISO_IN" ]]; then
   echo "Usage: sudo $0 /duongdan/ubuntu-24.04.3-desktop-amd64.iso [output.iso]"
@@ -44,6 +45,48 @@ replace_text_tree() {
   while IFS= read -r f; do
     replace_text_file "$f"
   done < <(grep -IlR --binary-files=without-match -E 'Ubuntu|ubuntu|UBUNTU' "$root" 2>/dev/null || true)
+}
+
+fix_gnome_live_session_ids() {
+  local root="$1"
+  local f
+  for f in \
+    "$root/usr/share/xsessions/ubuntu.desktop" \
+    "$root/usr/share/xsessions/ubuntu-xorg.desktop"; do
+    [[ -f "$f" ]] || continue
+    # Keep internal session/mode IDs as upstream "ubuntu"; only UI strings should be rebranded.
+    sed -i \
+      -e 's/GNOME_SHELL_SESSION_MODE=VNOS/GNOME_SHELL_SESSION_MODE=ubuntu/g' \
+      -e 's/--session=VNOS/--session=ubuntu/g' \
+      "$f" || true
+  done
+
+  f="$root/usr/share/gnome-shell/modes/ubuntu.json"
+  if [[ -f "$f" ]]; then
+    # Restore extension IDs expected by Ubuntu GNOME mode.
+    sed -i \
+      -e 's/VNOS-dock@VNOS.com/ubuntu-dock@ubuntu.com/g' \
+      -e 's/VNOS-appindicators@VNOS.com/ubuntu-appindicators@ubuntu.com/g' \
+      -e 's/tiling-assistant@VNOS.com/tiling-assistant@ubuntu.com/g' \
+      "$f" || true
+  fi
+}
+
+fix_casper_live_user() {
+  local root="$1"
+  local f="$root/etc/casper.conf"
+  [[ -f "$f" ]] || return 0
+  # Force a predictable lowercase live username and prevent casper auto-overriding from .disk/info.
+  sed -i \
+    -e 's/^export USERNAME=.*/export USERNAME="vnos"/' \
+    -e 's/^export HOST=.*/export HOST="vnos"/' \
+    -e 's/^export BUILD_SYSTEM=.*/export BUILD_SYSTEM="VNOS"/' \
+    "$f" || true
+  if grep -q '^# export FLAVOUR=' "$f"; then
+    sed -i 's/^# export FLAVOUR=.*/export FLAVOUR="vnos"/' "$f" || true
+  elif ! grep -q '^export FLAVOUR=' "$f"; then
+    printf '\nexport FLAVOUR="vnos"\n' >> "$f"
+  fi
 }
 
 patch_initrd_branding() {
@@ -184,19 +227,20 @@ for f in \
   replace_text_file "$f"
 done
 
-# Replace installer/live text labels broadly in extracted ISO tree.
+# Safe branding only: avoid deep modifications that can break GDM/desktop startup.
 replace_text_tree "$WORKDIR/iso/.disk"
 replace_text_tree "$WORKDIR/iso/boot"
 replace_text_tree "$WORKDIR/iso/EFI"
-replace_text_tree "$WORKDIR/iso/casper"
+if [[ "$SAFE_MODE" != "1" ]]; then
+  replace_text_tree "$WORKDIR/iso/casper"
+  echo "[INFO] Patch initrd boot splash/logo..."
+  VNOS_BOOT_LOGO="$ROOT_DIR/assets/wallpapers/vietnam-dawn-demo.png"
+  while IFS= read -r initrd; do
+    patch_initrd_branding "$initrd" "$VNOS_BOOT_LOGO"
+  done < <(find "$WORKDIR/iso/casper" -maxdepth 1 -type f -name 'initrd*' ! -name '*.sig' ! -name '*.gpg' 2>/dev/null || true)
+fi
 
-echo "[INFO] Patch initrd boot splash/logo..."
-VNOS_BOOT_LOGO="$ROOT_DIR/assets/wallpapers/vietnam-dawn-demo.png"
-while IFS= read -r initrd; do
-  patch_initrd_branding "$initrd" "$VNOS_BOOT_LOGO"
-done < <(find "$WORKDIR/iso/casper" -maxdepth 1 -type f -name 'initrd*' ! -name '*.sig' ! -name '*.gpg' 2>/dev/null || true)
-
-# Disable splash/logo at early boot stage.
+# Keep quiet boot by default (no verbose session flood).
 for f in \
   "$WORKDIR/iso/boot/grub/grub.cfg" \
   "$WORKDIR/iso/boot/grub/loopback.cfg" \
@@ -204,14 +248,11 @@ for f in \
   [[ -f "$f" ]] || continue
   sed -i -E \
     -e 's/[[:space:]]+plymouth.enable=0//g' \
+    -e 's/[[:space:]]+nosplash//g' \
     -e 's/[[:space:]]+loglevel=[0-9]+//g' \
     -e 's/[[:space:]]+systemd.show_status=[a-z0-9]+//g' \
-    -e 's/[[:space:]]+rd.udev.log_level=[0-9]+//g' \
-    -e 's/[[:space:]]+vt.global_cursor_default=[0-9]+//g' \
-    -e 's/(^|[[:space:]])quiet([[:space:]]|$)/ /g' \
-    -e 's/(^|[[:space:]])splash([[:space:]]|$)/ /g' \
     "$f"
-  sed -i -E 's/ ---/ plymouth.enable=0 nosplash loglevel=4 systemd.show_status=1 ---/g' "$f"
+  sed -i -E 's/ ---/ quiet splash loglevel=3 systemd.show_status=false ---/g' "$f"
   sed -i -E 's/[[:space:]]+/ /g' "$f"
 done
 
@@ -225,9 +266,13 @@ for f in \
   replace_text_file "$f"
 done
 
-# Replace visible Ubuntu strings in live rootfs UI and installer assets.
+# Safe mode: do not mass-replace /usr/share (can break GNOME session files).
 replace_text_tree "$WORKDIR/chroot/etc"
-replace_text_tree "$WORKDIR/chroot/usr/share"
+if [[ "$SAFE_MODE" != "1" ]]; then
+  replace_text_tree "$WORKDIR/chroot/usr/share"
+  fix_gnome_live_session_ids "$WORKDIR/chroot"
+  fix_casper_live_user "$WORKDIR/chroot"
+fi
 
 if [[ -f "$WORKDIR/chroot/etc/os-release" ]]; then
   sed -i \
@@ -251,7 +296,7 @@ if [[ -f "$WORKDIR/chroot/etc/lsb-release" ]]; then
 fi
 if [[ -f "$WORKDIR/chroot/etc/default/grub" ]]; then
   sed -i \
-    -e 's/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="plymouth.enable=0 nosplash loglevel=4 systemd.show_status=1"/' \
+    -e 's/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash loglevel=3 systemd.show_status=false"/' \
     "$WORKDIR/chroot/etc/default/grub" || true
 fi
 
@@ -317,13 +362,15 @@ fi
 
 echo "[INFO] Patch base layer minimal.squashfs (boot splash)..."
 BASE_SQFS="$WORKDIR/iso/casper/minimal.squashfs"
-if [[ -f "$BASE_SQFS" && "$BASE_SQFS" != "$SQFS" ]]; then
+if [[ "$SAFE_MODE" != "1" && -f "$BASE_SQFS" && "$BASE_SQFS" != "$SQFS" ]]; then
   rm -rf "$WORKDIR/basechroot"
   mkdir -p "$WORKDIR/basechroot"
   unsquashfs -f -d "$WORKDIR/basechroot" "$BASE_SQFS" >/dev/null
 
   replace_text_tree "$WORKDIR/basechroot/etc"
   replace_text_tree "$WORKDIR/basechroot/usr/share"
+  fix_gnome_live_session_ids "$WORKDIR/basechroot"
+  fix_casper_live_user "$WORKDIR/basechroot"
 
   if [[ -f "$WORKDIR/basechroot/etc/os-release" ]]; then
     sed -i \

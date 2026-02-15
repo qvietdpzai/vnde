@@ -117,7 +117,11 @@ install_shared_files() {
 
   # Keep a local source copy so users can run vnde-install / vnde-update from terminal.
   if [[ "$(realpath "$ROOT_DIR" 2>/dev/null || echo "$ROOT_DIR")" != "$(realpath "$SOURCE_MIRROR" 2>/dev/null || echo "$SOURCE_MIRROR")" ]]; then
-    run_cmd "cp -a \"$ROOT_DIR/.\" \"$SOURCE_MIRROR/\""
+    if command -v rsync >/dev/null 2>&1; then
+      run_cmd "rsync -a --delete --exclude '.git' \"$ROOT_DIR/\" \"$SOURCE_MIRROR/\""
+    else
+      run_cmd "cp -a \"$ROOT_DIR/.\" \"$SOURCE_MIRROR/\""
+    fi
   else
     log "Source mirror is current directory; skip source copy."
   fi
@@ -137,6 +141,7 @@ install_shared_files() {
   run_cmd "cp \"$ROOT_DIR/vnde/gui/vn_monitor_center.py\" \"$HOME/.local/share/vnde/gui/vn_monitor_center.py\""
   run_cmd "cp \"$ROOT_DIR/vnde/gui/vn_forum_center.py\" \"$HOME/.local/share/vnde/gui/vn_forum_center.py\""
   run_cmd "cp \"$ROOT_DIR/vnde/gui/vn_forum_node.py\" \"$HOME/.local/share/vnde/gui/vn_forum_node.py\""
+  run_cmd "cp \"$ROOT_DIR/vnde/gui/vn_docker_center.py\" \"$HOME/.local/share/vnde/gui/vn_docker_center.py\""
 
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-app-store\" \"$HOME/.local/bin/vn-app-store\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-news\" \"$HOME/.local/bin/vn-news\""
@@ -148,6 +153,7 @@ install_shared_files() {
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-setting\" \"$HOME/.local/bin/vn-setting\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-monitor\" \"$HOME/.local/bin/vn-monitor\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-forum\" \"$HOME/.local/bin/vn-forum\""
+  run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-docker\" \"$HOME/.local/bin/vn-docker\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-terminal-context-menu\" \"$HOME/.local/bin/vn-terminal-context-menu\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/menu\" \"$HOME/.local/bin/menu\""
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vn-file-manager\" \"$HOME/.local/bin/vn-file-manager\""
@@ -161,8 +167,8 @@ install_shared_files() {
   run_cmd "cp \"$ROOT_DIR/vnde/scripts/vnde-gnome-panel\" \"$HOME/.local/bin/vnde-gnome-panel\""
   run_cmd "cp \"$ROOT_DIR/vnde/tint2/tint2rc\" \"$HOME/.config/vnde/tint2/tint2rc\""
 
-  run_cmd "chmod +x \"$HOME/.local/share/vnde/gui/vn_app_center.py\" \"$HOME/.local/share/vnde/gui/vn_news_center.py\" \"$HOME/.local/share/vnde/gui/vn_music_center.py\" \"$HOME/.local/share/vnde/gui/vn_menu_center.py\" \"$HOME/.local/share/vnde/gui/vn_file_manager.py\" \"$HOME/.local/share/vnde/gui/vn_helper_center.py\" \"$HOME/.local/share/vnde/gui/vn_supports_center.py\" \"$HOME/.local/share/vnde/gui/vn_setting_center.py\" \"$HOME/.local/share/vnde/gui/vn_monitor_center.py\" \"$HOME/.local/share/vnde/gui/vn_forum_center.py\" \"$HOME/.local/share/vnde/gui/vn_forum_node.py\""
-  run_cmd "chmod +x \"$HOME/.local/bin/vn-app-store\" \"$HOME/.local/bin/vn-news\" \"$HOME/.local/bin/vn-music\" \"$HOME/.local/bin/vn-menu\" \"$HOME/.local/bin/vn-terminal\" \"$HOME/.local/bin/vn-helper\" \"$HOME/.local/bin/vn-supports\" \"$HOME/.local/bin/vn-setting\" \"$HOME/.local/bin/vn-monitor\" \"$HOME/.local/bin/vn-forum\" \"$HOME/.local/bin/vn-terminal-context-menu\" \"$HOME/.local/bin/menu\" \"$HOME/.local/bin/vn-file-manager\" \"$HOME/.local/bin/vn-sound-popup\" \"$HOME/.local/bin/vn-news-cli\" \"$HOME/.local/bin/vn-news-panel\" \"$HOME/.local/bin/vnde-install\" \"$HOME/.local/bin/vnde-update\" \"$HOME/.local/bin/vnde\" \"$HOME/.local/bin/vnde-bootstrap\" \"$HOME/.local/bin/vnde-gnome-panel\""
+  run_cmd "chmod +x \"$HOME/.local/share/vnde/gui/vn_app_center.py\" \"$HOME/.local/share/vnde/gui/vn_news_center.py\" \"$HOME/.local/share/vnde/gui/vn_music_center.py\" \"$HOME/.local/share/vnde/gui/vn_menu_center.py\" \"$HOME/.local/share/vnde/gui/vn_file_manager.py\" \"$HOME/.local/share/vnde/gui/vn_helper_center.py\" \"$HOME/.local/share/vnde/gui/vn_supports_center.py\" \"$HOME/.local/share/vnde/gui/vn_setting_center.py\" \"$HOME/.local/share/vnde/gui/vn_monitor_center.py\" \"$HOME/.local/share/vnde/gui/vn_forum_center.py\" \"$HOME/.local/share/vnde/gui/vn_forum_node.py\" \"$HOME/.local/share/vnde/gui/vn_docker_center.py\""
+  run_cmd "chmod +x \"$HOME/.local/bin/vn-app-store\" \"$HOME/.local/bin/vn-news\" \"$HOME/.local/bin/vn-music\" \"$HOME/.local/bin/vn-menu\" \"$HOME/.local/bin/vn-terminal\" \"$HOME/.local/bin/vn-helper\" \"$HOME/.local/bin/vn-supports\" \"$HOME/.local/bin/vn-setting\" \"$HOME/.local/bin/vn-monitor\" \"$HOME/.local/bin/vn-forum\" \"$HOME/.local/bin/vn-docker\" \"$HOME/.local/bin/vn-terminal-context-menu\" \"$HOME/.local/bin/menu\" \"$HOME/.local/bin/vn-file-manager\" \"$HOME/.local/bin/vn-sound-popup\" \"$HOME/.local/bin/vn-news-cli\" \"$HOME/.local/bin/vn-news-panel\" \"$HOME/.local/bin/vnde-install\" \"$HOME/.local/bin/vnde-update\" \"$HOME/.local/bin/vnde\" \"$HOME/.local/bin/vnde-bootstrap\" \"$HOME/.local/bin/vnde-gnome-panel\""
   run_cmd "sudo install -Dm755 \"$HOME/.local/bin/vnde-install\" /usr/local/bin/vnde-install || true"
   run_cmd "sudo install -Dm755 \"$HOME/.local/bin/vnde-update\" /usr/local/bin/vnde-update || true"
   run_cmd "sudo install -Dm755 \"$HOME/.local/bin/vnde\" /usr/local/bin/vnde || true"

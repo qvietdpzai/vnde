@@ -17,7 +17,7 @@ MENU_ITEMS = [
     ("Tin tuc", "VN News", "Doc tin trong giao dien GUI", "vn-news", "vnde-news"),
     ("Tin tuc", "VN News CLI", "Doc tin nhanh trong terminal", "vn-terminal -e vn-news-cli", "vnde-news"),
     ("Giai tri", "VN Music", "Mo trung tam am nhac", "vn-music", "vnde-music"),
-    ("He thong", "Docker", "Mo trang thai docker", "vnde-docker.desktop", "vnde-docker"),
+    ("He thong", "VN Docker", "Quan ly container bang giao dien VNDE", "vn-docker", "vnde-docker"),
     ("He thong", "Settings", "Cai dat he thong GNOME", "gnome-control-center", "preferences-system"),
     ("Ung dung", "Firefox", "Trinh duyet web", "firefox", "firefox"),
     ("Ung dung", "VN File Manager", "Quan ly file theo phong cach VNDE", "vn-file-manager", "vnde-file-manager"),

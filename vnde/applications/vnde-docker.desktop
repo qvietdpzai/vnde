@@ -1,8 +1,9 @@
 [Desktop Entry]
 Name=VN Docker
-Comment=Quan ly Docker nhanh
-Exec=xterm -e sh -lc 'docker ps; echo; echo "Nhan Enter de thoat"; read -r _'
+Comment=Trung tam quan ly Docker cua VNDE
+Exec=vn-docker
 Type=Application
 Categories=System;Development;
 Icon=vnde-docker
+StartupWMClass=vnde-docker
 Terminal=false
